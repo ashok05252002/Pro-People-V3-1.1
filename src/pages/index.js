@@ -7,6 +7,8 @@ import CustomizeInputs from './employee/CustomizeInputs'
 import EmployeeGroups from './employee/EmployeeGroups'
 import { ProfileRequest, AttendancePolicy, MasterReport, ReportingManager } from './employee/EmployeeReports'
 import { DocumentSetup, DocumentImport, LetterTemplates, Letters } from './employee/DocsLetters'
+import * as R from './Recruitment'
+import * as C from './Company'
 
 export const pages = {
   '/dashboard': Dashboard,
@@ -23,4 +25,21 @@ export const pages = {
   '/document/import': DocumentImport,
   '/lettermanager/templates': LetterTemplates,
   '/lettermanager/letterTable': Letters,
+  '/recruitment/interview': R.Interviews,
+  '/recruitment/onboard': R.Onboard,
+  '/recruitment/letter-of-intent-history': R.LoiHistory,
+  '/recruitment/candidates': R.Candidates,
+  '/organization/department': C.Departments,
+  '/organization/designation': C.Designations,
+  '/organization/location': C.Locations,
+  '/organization/categories': C.Categories,
+  '/settings/documents': C.CompanyDocuments,
+  '/organization/vendor': C.Vendors,
+  '/organization/employment_types': C.EmploymentTypes,
+  '/organization/ministry': C.Ministry,
+  '/organization/nationalities': C.Nationalities,
+  '/gratuity/contract-types': C.ContractTypes,
+  '/zone': C.Zones,
+  '/geotracking/geolocation': C.Geolocations,
+  '/roles': C.AccessLevels,
 }
