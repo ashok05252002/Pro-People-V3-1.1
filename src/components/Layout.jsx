@@ -69,7 +69,7 @@ function Sidebar({ collapsed, setCollapsed }) {
           return (
             <li key={item.label}>
               <button
-                className={top(false) + (isOpen ? ' bg-base-200' : '')}
+                className={top(containsPath(item, pathname))}
                 onClick={() => (collapsed ? setCollapsed(false) : setOpen(isOpen ? null : item.label))}
                 title={item.label}
               >
