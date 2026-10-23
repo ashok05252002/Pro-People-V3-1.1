@@ -103,7 +103,7 @@ export function LeaveGroups() {
               <span className="flex items-center gap-3"><input type="checkbox" className="toggle toggle-sm" defaultChecked={on} /><CircleArrowRight size={16} /></span>
             </div>
             <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-1 gap-y-1 text-xs">
-              {[['Department', d], ['Designation', des], ['Category', c], ['Location', l]].map(([k, v]) => <><dt key={k} className="text-right font-medium">{k}:</dt><dd key={k + 'v'}>{v}</dd></>)}
+              {[['Department', d], ['Designation', des], ['Category', c], ['Location', l]].flatMap(([k, v]) => [<dt key={k} className="text-right font-medium">{k}:</dt>, <dd key={k + 'v'}>{v}</dd>])}
             </dl>
           </div>
         ))}
