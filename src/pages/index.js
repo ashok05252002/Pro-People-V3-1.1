@@ -9,6 +9,9 @@ import { ProfileRequest, AttendancePolicy, MasterReport, ReportingManager } from
 import { DocumentSetup, DocumentImport, LetterTemplates, Letters } from './employee/DocsLetters'
 import * as R from './Recruitment'
 import * as C from './Company'
+import * as TA from './timetracker/Approvals'
+import * as TS from './timetracker/Setup'
+import * as AT from './timetracker/Attendance'
 
 export const pages = {
   '/dashboard': Dashboard,
@@ -42,4 +45,31 @@ export const pages = {
   '/zone': C.Zones,
   '/geotracking/geolocation': C.Geolocations,
   '/roles': C.AccessLevels,
+  '/timetracker/approval': TA.LeaveRequests,
+  '/timetracker/ot_approval': TA.OtApprovals,
+  '/timetracker/compoff_approval': TA.CompOffRequests,
+  '/overtime_application_approval': TA.OvertimeRequests,
+  '/punchrequest/approval_punchrequest': TA.PunchRequests,
+  '/timetracker/permission_approval': TA.PermissionRequests,
+  '/prosync/devices': TS.ProsyncDevices,
+  '/timetracker/devices': TS.BiometricDevices,
+  '/prosync/device-groups': TS.DeviceGroups,
+  '/camera': TS.Cameras,
+  '/zone/mapping': TS.ZoneMapping,
+  '/timetracker/leave_groups': TS.LeaveGroups,
+  '/timetracker/leave_credits': TS.LeaveCredits,
+  '/timetracker/calendar': TS.LeaveCalendar,
+  '/timetracker/public_holidays': TS.PublicHolidays,
+  '/optionalholiday': TS.OptionalHolidays,
+  '/timetracker/master_shift': TS.Shifts,
+  '/timetracker/shift_group': AT.ShiftGroups,
+  '/timetracker/roster': AT.ShiftRoster,
+  '/timetracker/reports': AT.ReportsHub,
+  '/timetracker/exclude_late_deduction': AT.ExcludeLate,
+  '/timetracker/lock_attendance': AT.LockAttendance,
+  '/timetracker/manual_time_adjustment': AT.TimeAdjustment,
+  '/attendance_adjustment': AT.AttendanceUploads,
+  '/index': AT.LatePolicySetup,
+  '/late-policy/leave-credits': AT.ProcessLeaveCredits,
+  '/zone/reports': AT.ZoneReports,
 }
