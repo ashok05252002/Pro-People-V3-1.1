@@ -1,7 +1,7 @@
 // Shift groups, roster, reports hub and attendance-control screens.
 import { useState } from 'react'
 import { Pencil, Download, FileText, Upload, SlidersHorizontal, Filter, Lock, LockOpen, ChevronDown, Plus, Info, CalendarDays, Fingerprint } from 'lucide-react'
-import { Page, Btn, SearchBox, DataTable, Badge, Person, rowsOf } from '../../components/table'
+import { Page, Btn, SearchBox, DataTable, Badge, Person } from '../../components/table'
 import { Avatar } from '../../components/ui'
 import { employees, emp } from '../../data/people'
 
@@ -211,40 +211,88 @@ export function AttendanceUploads() {
 }
 
 export function LatePolicySetup() {
-  const slabs = rowsOf(['from', 'to', 'count', 'deduct', 'type'], [['00:01', '00:15', '3 times', '0.5 day', 'Leave'], ['00:16', '00:30', '2 times', '0.5 day', 'Leave'], ['00:31', '01:00', '1 time', '0.5 day', 'Salary'], ['01:01', '—', '1 time', '1 day', 'Salary']])
+  const policies = [
+    { name: 'Random Sequence 1 days', type: 'random', unit: 'Days', limit: 1, deduction: 'Half Day', priority: 'Annual Leave, Sick Leave' },
+    { name: 'Continuous 3 days', type: 'continuous', unit: 'Days', limit: 3, deduction: 'Full Day', priority: 'Annual Leave' },
+  ]
   return (
-    <Page title="Late Policy Setup" actions={<Btn primary>Add Policy</Btn>}>
-      <div className="mb-4 grid gap-3 rounded-lg bg-base-100 p-4 shadow-sm md:grid-cols-4">
-        {[['Policy Name', 'Standard Late Policy'], ['Applies To', 'All Employees'], ['Grace Period', '10 minutes'], ['Cycle', 'Monthly']].map(([k, v]) => (
-          <div key={k}><div className="text-[11px] text-base-content/60">{k}</div><div className="text-[13px] font-semibold">{v}</div></div>
+    <Page title="Late Policies" actions={<Btn primary icon={Plus}>Add Late Policy</Btn>}>
+      <div className="grid gap-3 md:grid-cols-2">
+        {policies.map((p) => (
+          <div key={p.name} className="rounded-lg bg-base-100 p-4 shadow-sm">
+            <div className="flex items-center justify-between border-b border-base-300 pb-3">
+              <h3 className="text-base font-bold">{p.name}</h3>
+              <span className="flex items-center gap-3"><input type="checkbox" className="toggle toggle-sm" defaultChecked /><Pencil size={15} /></span>
+            </div>
+            <dl className="mt-3 grid grid-cols-2 gap-y-2 text-xs">
+              {[['Type', p.type], ['Unit', p.unit], ['Day limit', p.limit], ['Deduction', p.deduction], ['Leave priority', p.priority]].flatMap(([k, v]) => [
+                <dt key={k} className="text-base-content/60">{k}</dt>, <dd key={k + 'v'} className="font-medium">{v}</dd>])}
+            </dl>
+          </div>
         ))}
       </div>
-      <DataTable rows={slabs} selectable={false} columns={[
-        { key: 'from', label: 'Late From' }, { key: 'to', label: 'Late To' }, { key: 'count', label: 'Occurrences' }, { key: 'deduct', label: 'Deduction' },
-        { key: 'type', label: 'Deduct From' }, { key: '_a', label: '', render: () => <Pencil size={15} /> },
-      ]} />
     </Page>
   )
 }
 
 export function ProcessLeaveCredits() {
-  const rows = employees.slice(0, 10).map((e, i) => ({ ...e, lates: i % 6, deduction: [0, 0, 0.5, 0.5, 1, 1][i % 6], balance: 12 - (i % 4), status: i % 6 > 1 ? 'Pending' : 'Completed' }))
+  const [q, setQ] = useState('')
+  const [sel, setSel] = useState(new Set())
+  const list = employees.filter((e) => (e.name + e.code).toLowerCase().includes(q.toLowerCase()))
+  const toggle = (id) => setSel((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n })
   return (
     <Page title="Process Leave Credits">
-      <div className="mb-2 flex flex-wrap items-end gap-2">
-        <DateField label="Month" type="month" value="2026-10" />
-        <div className="flex-1" /><Btn primary>Process</Btn>
+      <div className="mb-3 rounded-lg bg-base-100 p-3 shadow-sm">
+        <div className="mb-2 flex items-center justify-between text-xs font-bold">Filters<Btn primary icon={Filter} className="h-8">Filter</Btn></div>
+        <div className="grid gap-2 md:grid-cols-3">
+          <DateField label="Month" type="month" value="2026-10" w="w-full" />
+          {['Department', 'Designations', 'Categories', 'Locations', 'Vendor'].map((m) => <label key={m} className="text-[11px] font-semibold">{m}<select className="select mt-1 block w-full"><option>0 selected</option></select></label>)}
+        </div>
+        <div className="mt-3 flex gap-2"><SearchBox value={q} onChange={setQ} placeholder="Search" className="flex-1" /><Btn primary>Process Leave Credits</Btn></div>
       </div>
-      <DataTable rows={rows} columns={[
-        { key: 'name', label: 'Employee', render: (e) => <Person e={e} badges={<span className="text-[11px] text-base-content/60">{e.code}</span>} /> },
-        { key: 'lates', label: 'Late Count' }, { key: 'deduction', label: 'Leave Deduction' }, { key: 'balance', label: 'Leave Balance' },
-        { key: 'status', label: 'Status', render: (r) => <Badge>{r.status}</Badge> },
-      ]} />
+      <div className="rounded-lg bg-base-100 p-3 shadow-sm">
+        <div className="mb-2 flex items-center gap-3 text-xs">
+          <span className="font-semibold">Selected Employees {sel.size}</span>
+          <button className="btn btn-xs" onClick={() => setSel(new Set(list.map((e) => e.id)))}>All</button>
+          <button className="btn btn-xs" onClick={() => setSel(new Set(list.slice(0, 10).map((e) => e.id)))}>Page</button>
+          <span className="ml-auto text-base-content/60">Found {list.length} employees</span>
+        </div>
+        <div className="grid gap-1 md:grid-cols-3">
+          {list.map((e) => (
+            <label key={e.id} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] hover:bg-base-200">
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-primary" checked={sel.has(e.id)} onChange={() => toggle(e.id)} />{e.name} ({e.code})
+            </label>
+          ))}
+        </div>
+      </div>
     </Page>
   )
 }
 
 export function ZoneReports() {
-  return <ReportsHub title="Zone Reports" groups={[['Zone', ['Employee Movement Report', 'Zone Occupancy Report', 'Location Transfer Report', 'Invalid Zone Report', 'Zone Dwell Time Report', 'Unauthorized Access Report']]]} />
+  const [q, setQ] = useState('')
+  const rows = [[0, 'Reception', 'IN', 'Biometric', 'Main Gate', '23-10-2026 09:02', 'Valid'], [0, 'Server Room', 'IN', 'Camera', 'CAM-01', '23-10-2026 10:12', 'Valid'],
+    [4, 'Warehouse', 'IN', 'Biometric', 'Basement', '23-10-2026 09:40', 'Valid'], [4, 'Warehouse', 'OUT', 'Biometric', 'Block B Exit', '23-10-2026 13:05', 'Valid'],
+    [9, 'Server Room', 'IN', 'Camera', 'CAM-01', '23-10-2026 11:20', 'Invalid']]
+    .map(([i, zone, dir, src, dev, at, status], n) => ({ ...emp(i), id: n + 1, zone, dir, src, dev, at, status }))
+  return (
+    <Page title="Zone Telemetry Reports & Analytics" subtitle="Real-time movement reports, active zone counts, and verification audits" actions={<Btn icon={Download}>Export Excel</Btn>}>
+      <div className="mb-3 rounded-lg bg-base-100 p-3 shadow-sm">
+        <div className="mb-2 text-[11px] font-bold uppercase text-base-content/60">Unified Filtering Matrix</div>
+        <div className="grid gap-2 md:grid-cols-3">
+          <label className="text-[11px] font-semibold">Employee Name / Code<SearchBox value={q} onChange={setQ} placeholder="Search" className="mt-1" /></label>
+          <DateField label="From Date" value="2026-10-01" w="w-full" /><DateField label="To Date" value="2026-10-23" w="w-full" />
+          {[['Physical Location', 'All Locations', 'Head Office', 'Development Center', 'Regional Office'], ['Target Zone', 'All Zones', 'Reception', 'Server Room', 'Warehouse'], ['Department', 'All Departments', 'Finance', 'Human Resources']].map(([l, ...o]) => (
+            <label key={l} className="text-[11px] font-semibold">{l}<select className="select mt-1 block w-full">{o.map((x) => <option key={x}>{x}</option>)}</select></label>
+          ))}
+        </div>
+      </div>
+      <DataTable rows={rows} query={q} searchKeys={['name', 'code']} selectable={false} columns={[
+        { key: 'name', label: 'Employee' }, { key: 'code', label: 'Code' }, { key: 'zone', label: 'Zone Name' },
+        { key: 'dir', label: 'Direction', render: (r) => <span className={`rounded px-2 py-0.5 text-[11px] ${r.dir === 'IN' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>{r.dir}</span> },
+        { key: 'src', label: 'Source' }, { key: 'dev', label: 'Device / Camera' }, { key: 'at', label: 'Logged At' },
+        { key: 'status', label: 'Status', render: (r) => <span className={`rounded px-2 py-0.5 text-[11px] ${r.status === 'Valid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}`}>{r.status}</span> },
+      ]} />
+    </Page>
+  )
 }
-
