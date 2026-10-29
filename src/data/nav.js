@@ -1,6 +1,6 @@
 // Sidebar menu, captured from the staging app on 2026-10-23.
 import {
-  Rocket, Contact, BriefcaseBusiness, Building2, Clock, BookOpen,
+  Rocket, Contact, Building2, Clock, BookOpen,
 } from 'lucide-react'
 
 export const nav = [
@@ -8,14 +8,6 @@ export const nav = [
   {
     label: 'Employee', icon: Contact, children: [
       { label: 'Employee List', path: '/employee/employee' },
-    ],
-  },
-  {
-    label: 'Recruitment', icon: BriefcaseBusiness, children: [
-      { label: 'Interviews', path: '/recruitment/interview' },
-      { label: 'Onboarding', path: '/recruitment/onboard' },
-      { label: 'LOI History', path: '/recruitment/letter-of-intent-history' },
-      { label: 'Candidates', path: '/recruitment/candidates' },
     ],
   },
   {

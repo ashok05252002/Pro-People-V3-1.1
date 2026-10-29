@@ -8,7 +8,6 @@ import CustomizeInputs from './employee/CustomizeInputs'
 import EmployeeGroups from './employee/EmployeeGroups'
 import { ProfileRequest, AttendancePolicy, MasterReport, ReportingManager } from './employee/EmployeeReports'
 import { DocumentSetup, DocumentImport, LetterTemplates, Letters } from './employee/DocsLetters'
-import * as R from './Recruitment'
 import * as C from './Company'
 import * as TA from './timetracker/Approvals'
 import * as TS from './timetracker/Setup'
@@ -35,10 +34,6 @@ export const pages = {
   '/document/import': DocumentImport,
   '/lettermanager/templates': LetterTemplates,
   '/lettermanager/letterTable': Letters,
-  '/recruitment/interview': R.Interviews,
-  '/recruitment/onboard': R.Onboard,
-  '/recruitment/letter-of-intent-history': R.LoiHistory,
-  '/recruitment/candidates': R.Candidates,
   '/organization/department': C.Departments,
   '/organization/designation': C.Designations,
   '/organization/location': C.Locations,

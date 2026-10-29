@@ -181,11 +181,6 @@ const permissionTree = [
       ['Qualification', ['Add Employee Qualifications', 'Edit Employee Qualifications', 'Delete Employee Qualifications']],
       ['KYC', ['Add KYC Documents', 'Edit KYC Documents', 'Delete KYC Documents']]]],
   ]],
-  ['Recruitment', [
-    ['Recruitment', [['Interview', ['View Interview List', 'Add Interview', 'Modify Interview', 'Delete Interview']],
-      ['Onboard', ['View Onboard List', 'User Onboard']],
-      ['Candidate', ['View Candidate List', 'Add Candidate', 'Modify Candidate', 'Delete Candidate', 'Import Candidate', 'Export Candidate']]]],
-  ]],
   ['Time Tracker', [
     ['Timetracker', [['Leave Group', ['View Leave Groups', 'Create Leave Groups', 'Edit Leave Groups', 'Delete Leave Groups']],
       ['Public Holiday', ['View Public Holidays', 'Create Public Holidays', 'Edit Public Holidays', 'Delete Public Holidays']],

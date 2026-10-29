@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Check, Plus, Trash2 } from 'lucide-react'
 import { Btn } from '../../components/table'
 import { FormGrid } from '../../components/forms'
-import { departments, designations, categories, locations, vendors, employees } from '../../data/people'
+import { departments, designations, categories, locations } from '../../data/people'
 
 const sel = (label, options, extra) => ({ label, type: 'select', placeholder: `Select ${label}`, options, ...extra })
 const sec = (label) => ({ label, type: 'section' })
@@ -30,18 +30,13 @@ function Repeater({ title, add, fields }) {
 const steps = [
   { title: 'Account & Employment', fields: [
     sec('Account Status'), sel('Account Status', ['Active', 'Inactive'], { placeholder: '', value: 'Active' }), { label: 'Inactive From Date', type: 'date' },
-    sec('Account Information'), { label: 'Username', placeholder: 'Username' }, { label: 'Login Email', type: 'email', placeholder: 'Login Email' },
-    sec('Roles and Permissions'), sel('Role', ['Super Admin', 'Employee', 'Manager', 'General Manager', 'Team', 'Self']),
   ] },
   { title: 'Work Profile', fields: [
     sec('Employment Details'), { label: 'Employee Code', req: true }, { label: 'Employee Device Code' },
-    sel('Employee Group', ['Head Office Staff', 'Security Team', 'Management']), { label: 'Official Email', type: 'email' },
-    { label: 'Date of Joining', type: 'date', req: true }, { label: 'End of Probation', type: 'date' }, { label: 'Wages', type: 'number' }, { label: 'Grade' },
+    { label: 'Official Email', type: 'email' }, { label: 'Date of Joining', type: 'date', req: true },
+    { label: 'End of Probation', type: 'date' }, { label: 'Wages', type: 'number' }, { label: 'Grade' },
     sec('Organization'), sel('Department', departments, { req: true }), sel('Designation', designations, { req: true }), sel('Category', categories),
-    sel('Vendor', vendors), sel('Ministry', ['Ministry of Labour', 'Ministry of Human Resources']),
-    sel('Employment Type', ['Full Time', 'Part Time', 'Contractor', 'Internship', 'Permanent', 'Probationary', 'Temporary']),
-    sel('Nationality', ['Indian', 'Omani', 'Filipino', 'British', 'Egyptian']), sel('Location', locations), { label: 'Ministry Approval Number' },
-    sec('Team'), sel('Reporting Manager', employees.slice(0, 8).map((e) => e.name)),
+    sel('Nationality', ['Indian', 'Omani', 'Filipino', 'British', 'Egyptian']), sel('Location', locations),
     sec('Employee Contract Information'), sel('Contract Type', ['Permanent', 'Limited', 'Unlimited']),
   ] },
   { title: 'Personal Details', fields: [
@@ -54,34 +49,11 @@ const steps = [
     sec('Family'), sel('Marital Status', ['Single', 'Married', 'Divorced', 'Widowed']), { label: 'Number of Children', type: 'number' },
     { label: 'Family Members', span: true, placeholder: 'e.g. Spouse, 2 children' },
   ] },
-  { title: 'Statutory & Bank', fields: [
-    sec('Employee Identification Number'), { label: 'ESIC Number' }, { label: 'PF Number' }, { label: 'UAN Number' },
-    sec('Bank Details'), { label: 'Bank Name' }, { label: 'Bank Account Number' }, { label: 'Branch' }, { label: 'IFSC Code' },
-  ] },
   { title: 'Attendance', fields: [
-    sec('Overtime'), sel('Overtime Applicable', ['Yes', 'No']), { label: 'Overtime Types', type: 'multi', placeholder: 'Select Overtime Types', options: ['Normal Ot', 'Weekoff Ot', 'Holiday Ot'] },
-    sec('Late'), sel('Late Applicable', ['Yes', 'No']), sec('Auto Shift'), sel('Auto Shift', ['Enabled', 'Disabled']),
-    sec('Geolocation'), sel('Geofence Type', ['No', 'Single', 'Multiple']), { label: 'Active Geolocations', type: 'multi', placeholder: 'Select Geolocations', options: ['Head Office', 'Development Center', 'Regional Office'] },
-    sec('Punch Type'), sel('Punch Type', ['Biometric', 'Mobile', 'Web', 'Any']),
-    sec('Comp Off'), sel('Comp Off Applicable', ['Yes', 'No']), { label: 'Comp Off Types', type: 'multi', placeholder: 'Select Comp Off Types', options: ['Week Off', 'Holiday'] },
-    sec('Work Span'), sel('Work Span', ['Same Day', 'Next Day']), sec('Device Group'), sel('Device Group', ['Head Office', 'Regional']),
+    sec('Overtime'), sel('Overtime Applicable', ['Yes', 'No']),
+    sec('Late'), sel('Late Applicable', ['Yes', 'No']),
+    sec('Device Group'), sel('Device Group', ['Head Office', 'Regional']),
   ] },
-  { title: 'Educational Qualifications', render: () => (
-    <Repeater title="Qualification" add="Add Qualification" fields={[
-      sel('Class', ['10th', '12th', 'Diploma', 'Under Graduate', 'Post Graduate', 'Doctorate'], { req: true, placeholder: 'Document Type' }),
-      { label: 'Board or University' }, { label: 'Institution' }, { label: 'Percentage', type: 'number' },
-      { label: 'Educational Qualifications', type: 'file', hint: 'Supports PDF, Images, Word.', span: true },
-    ]} />
-  ) },
-  { title: 'Past Experience', render: () => (
-    <>
-      <Repeater title="Experience" add="Add Experience" fields={[
-        { label: 'Company Name', span: true }, { label: 'Joining Date', type: 'date' }, { label: 'Relieving Date', type: 'date' },
-        { label: 'Past Experience', type: 'file', hint: 'Supports PDF, Images, Word.', span: true },
-      ]} />
-      <div className="mt-5"><FormGrid cols={3} fields={[{ label: 'Resume', type: 'file' }, { label: 'Assessment', type: 'file' }, { label: 'Joining Form', type: 'file' }]} /></div>
-    </>
-  ) },
   { title: 'Identity Document (KYC)', render: () => (
     <>
       <Repeater title="Document" add="Add KYC Document" fields={[
