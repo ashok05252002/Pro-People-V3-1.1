@@ -1,104 +1,145 @@
 {
   "user": "indigo",
   "location": "Park Town, IN",
-  "weather": { "temp": 30, "label": "Clouds", "high": 31, "low": 26, "humidity": 77, "wind": 14 },
+  "weather": {
+    "temp": 30,
+    "label": "Clouds",
+    "high": 31,
+    "low": 26,
+    "humidity": 77,
+    "wind": 14
+  },
   "stats": [
-    { "key": "active", "label": "Active", "value": 42, "pct": 86, "sub": "Active Employees", "color": "primary" },
-    { "key": "inactive", "label": "Inactive", "value": 7, "pct": 14, "sub": "Inactive Employees", "color": "neutral" },
-    { "key": "present", "label": "Present", "value": 18, "pct": 43, "sub": "In Office Today", "color": "success" },
-    { "key": "late", "label": "Late", "value": 3, "pct": 7, "sub": "Arrived late", "color": "warning" },
-    { "key": "absent", "label": "Absent", "value": 4, "pct": 10, "sub": "Not clocked in", "color": "error" },
-    { "key": "leave", "label": "On Leave", "value": 2, "pct": 5, "sub": "Approved leaves", "color": "warning" },
-    { "key": "weekoff", "label": "Week Offs", "value": 12, "pct": 29, "sub": "Scheduled off days", "color": "primary" },
-    { "key": "holiday", "label": "Holidays", "value": 0, "pct": 0, "sub": "Public holidays", "color": "secondary" },
-    { "key": "onduty", "label": "On-Duty", "value": 1, "pct": 2, "sub": "Working on assignment", "color": "info" },
-    { "key": "wfh", "label": "WFH", "value": 2, "pct": 5, "sub": "Work from home", "color": "accent" }
+    {
+      "key": "active",
+      "label": "Active",
+      "value": 42,
+      "pct": 86,
+      "sub": "Active Employees",
+      "color": "primary"
+    },
+    {
+      "key": "inactive",
+      "label": "Inactive",
+      "value": 7,
+      "pct": 14,
+      "sub": "Inactive Employees",
+      "color": "neutral"
+    },
+    {
+      "key": "present",
+      "label": "Present",
+      "value": 18,
+      "pct": 43,
+      "sub": "In Office Today",
+      "color": "success"
+    },
+    {
+      "key": "late",
+      "label": "Late",
+      "value": 3,
+      "pct": 7,
+      "sub": "Arrived late",
+      "color": "warning"
+    },
+    {
+      "key": "absent",
+      "label": "Absent",
+      "value": 4,
+      "pct": 10,
+      "sub": "Not clocked in",
+      "color": "error"
+    },
+    {
+      "key": "leave",
+      "label": "On Leave",
+      "value": 2,
+      "pct": 5,
+      "sub": "Approved leaves",
+      "color": "warning"
+    },
+    {
+      "key": "weekoff",
+      "label": "Week Offs",
+      "value": 12,
+      "pct": 29,
+      "sub": "Scheduled off days",
+      "color": "primary"
+    },
+    {
+      "key": "holiday",
+      "label": "Holidays",
+      "value": 0,
+      "pct": 0,
+      "sub": "Public holidays",
+      "color": "secondary"
+    },
+    {
+      "key": "onduty",
+      "label": "On-Duty",
+      "value": 1,
+      "pct": 2,
+      "sub": "Working on assignment",
+      "color": "info"
+    },
+    {
+      "key": "wfh",
+      "label": "WFH",
+      "value": 2,
+      "pct": 5,
+      "sub": "Work from home",
+      "color": "accent"
+    }
   ],
-  "devices": { "online": 3, "offline": 1 },
   "notifications": [
-    { "title": "Leave request from Priya Raman", "time": "10 min ago" },
-    { "title": "Punch request pending approval", "time": "1 hour ago" },
-    { "title": "Payroll for September generated", "time": "Yesterday" }
-  ],
-  "documents": [
-    { "name": "Employee Handbook 2026.pdf", "type": "Company", "date": "02 Oct 2026" },
-    { "name": "Leave Policy.pdf", "type": "Company", "date": "15 Sep 2026" },
-    { "name": "Offer Letter - Arun Kumar.pdf", "type": "Employee", "date": "11 Sep 2026" }
-  ],
-  "birthdays": [
-    { "name": "Arjun Mehta", "date": "6 Nov", "in": "In 2 weeks", "color": "#9333ea" },
-    { "name": "Sara Thomas", "date": "11 Nov", "in": "In 2 weeks 5 days", "color": "#7c3aed" },
-    { "name": "Rahul Nair", "date": "21 Nov", "in": "In 4 weeks 1 day", "color": "#db2777" },
-    { "name": "Divya Pillai", "date": "22 Nov", "in": "In 4 weeks 2 days", "color": "#be185d" }
-  ],
-  "notices": [
-    { "title": "Diwali office closure", "date": "20 Oct 2026" },
-    { "title": "Fire drill on Friday", "date": "17 Oct 2026" }
-  ],
-  "anniversaries": [
-    { "name": "Karthik Subramanian", "years": 3, "date": "28 Oct" },
-    { "name": "Meena Joseph", "years": 1, "date": "30 Oct" }
-  ],
-  "letters": [
-    { "name": "Experience Certificate", "date": "12 Oct 2026" },
-    { "name": "Salary Certificate", "date": "03 Oct 2026" }
+    {
+      "title": "Leave request from Priya Raman",
+      "time": "10 min ago"
+    },
+    {
+      "title": "Punch request pending approval",
+      "time": "1 hour ago"
+    },
+    {
+      "title": "Payroll for September generated",
+      "time": "Yesterday"
+    }
   ],
   "timeLogs": [
-    { "name": "Arun Kumar", "code": "EMP001", "device": "Main Gate", "in": "08:52 AM", "out": "-" },
-    { "name": "Priya Raman", "code": "EMP002", "device": "Main Gate", "in": "09:04 AM", "out": "-" },
-    { "name": "Vijay Shankar", "code": "EMP007", "device": "Block B", "in": "09:17 AM", "out": "-" },
-    { "name": "Lakshmi Iyer", "code": "EMP011", "device": "Main Gate", "in": "09:21 AM", "out": "01:05 PM" },
-    { "name": "Mohammed Irfan", "code": "EMP014", "device": "Block B", "in": "09:40 AM", "out": "-" }
-  ],
-  "workforce": { "joiners": 2, "exits": 1, "joinersYtd": 5, "exitsYtd": 3, "attrition": 6.1 },
-  "gender": { "female": 30, "male": 18 },
-  "attendanceTrend": [
-    { "day": "Sat", "v": 16 }, { "day": "Sun", "v": 4 }, { "day": "Mon", "v": 38 },
-    { "day": "Tue", "v": 35 }, { "day": "Wed", "v": 40 }, { "day": "Thu", "v": 37 }, { "day": "Fri", "v": 18 }
-  ],
-  "zones": [
-    { "name": "Reception", "location": "Head Office", "count": 4, "capacity": 10 },
-    { "name": "Server Room", "location": "Head Office", "count": 1, "capacity": 3 },
-    { "name": "Warehouse", "location": "Branch 1", "count": 7, "capacity": 20 }
-  ],
-  "movement": {
-    "timeline": [
-      { "name": "Arun Kumar", "from": "Reception", "to": "Server Room", "time": "10:12 AM" },
-      { "name": "Priya Raman", "from": "Warehouse", "to": "Reception", "time": "10:40 AM" }
-    ],
-    "transitions": 14,
-    "hourly": [
-      { "h": "8 AM", "v": 3 }, { "h": "9 AM", "v": 9 }, { "h": "10 AM", "v": 12 }, { "h": "11 AM", "v": 11 },
-      { "h": "12 PM", "v": 8 }, { "h": "1 PM", "v": 6 }, { "h": "2 PM", "v": 10 }, { "h": "3 PM", "v": 9 },
-      { "h": "4 PM", "v": 7 }, { "h": "5 PM", "v": 4 }
-    ]
-  },
-  "attendanceToday": {
-    "present": 18, "onTime": 15, "late": 3, "absent": 4,
-    "week": [
-      { "day": "Sat", "v": 16 }, { "day": "Sun", "v": 4 }, { "day": "Mon", "v": 38 },
-      { "day": "Tue", "v": 35 }, { "day": "Wed", "v": 40 }, { "day": "Thu", "v": 37 }, { "day": "Fri", "v": 18 }
-    ]
-  },
-  "leaveSummary": { "requests": 3, "onLeaveToday": 2, "types": [{ "name": "Annual Leave", "v": 4, "color": "#3b82f6" }, { "name": "Lieu Day", "v": 2, "color": "#10b981" }] },
-  "expenses": {
-    "pending": 1, "approved": 4, "rejected": 1, "approvedThisMonth": 12500,
-    "monthly": [{ "m": "May", "v": 8200 }, { "m": "Jun", "v": 5400 }, { "m": "Jul", "v": 9100 }, { "m": "Aug", "v": 3000 }, { "m": "Sep", "v": 7600 }, { "m": "Oct", "v": 12500 }]
-  },
-  "loans": {
-    "active": 2, "pending": 1, "outstanding": 145000, "disbursed": 50000,
-    "monthly": [{ "m": "May 26", "v": 0 }, { "m": "Jun 26", "v": 1 }, { "m": "Jul 26", "v": 0 }, { "m": "Aug 26", "v": 1 }, { "m": "Sep 26", "v": 0 }, { "m": "Oct 26", "v": 3 }]
-  },
-  "departments": [
-    { "name": "Customer Experience", "present": 3, "absent": 1, "late": 0, "leave": 0, "weekoff": 1, "holiday": 0 },
-    { "name": "Engineering & Technology", "present": 6, "absent": 0, "late": 1, "leave": 1, "weekoff": 0, "holiday": 0 },
-    { "name": "Executive Management", "present": 2, "absent": 0, "late": 0, "leave": 0, "weekoff": 0, "holiday": 0 },
-    { "name": "Facility", "present": 1, "absent": 0, "late": 0, "leave": 0, "weekoff": 3, "holiday": 0 },
-    { "name": "Female Security", "present": 3, "absent": 1, "late": 1, "leave": 0, "weekoff": 4, "holiday": 0 },
-    { "name": "Finance", "present": 2, "absent": 0, "late": 0, "leave": 1, "weekoff": 1, "holiday": 0 },
-    { "name": "Front Office", "present": 4, "absent": 1, "late": 1, "leave": 0, "weekoff": 4, "holiday": 0 },
-    { "name": "Human Resources", "present": 2, "absent": 0, "late": 0, "leave": 0, "weekoff": 1, "holiday": 0 },
-    { "name": "Male Security", "present": 3, "absent": 1, "late": 0, "leave": 0, "weekoff": 4, "holiday": 0 },
-    { "name": "Marketing", "present": 2, "absent": 0, "late": 0, "leave": 0, "weekoff": 2, "holiday": 0 }
+    {
+      "name": "Arun Kumar",
+      "code": "EMP001",
+      "device": "Main Gate",
+      "in": "08:52 AM",
+      "out": "-"
+    },
+    {
+      "name": "Priya Raman",
+      "code": "EMP002",
+      "device": "Main Gate",
+      "in": "09:04 AM",
+      "out": "-"
+    },
+    {
+      "name": "Vijay Shankar",
+      "code": "EMP007",
+      "device": "Block B",
+      "in": "09:17 AM",
+      "out": "-"
+    },
+    {
+      "name": "Lakshmi Iyer",
+      "code": "EMP011",
+      "device": "Main Gate",
+      "in": "09:21 AM",
+      "out": "01:05 PM"
+    },
+    {
+      "name": "Mohammed Irfan",
+      "code": "EMP014",
+      "device": "Block B",
+      "in": "09:40 AM",
+      "out": "-"
+    }
   ]
 }

@@ -18,9 +18,9 @@ export function Page({ title, subtitle, actions, children }) {
   )
 }
 
-export function Btn({ icon: Icon, children, primary, onClick, className = '' }) {
+export function Btn({ icon: Icon, children, primary, onClick, className = '', type = 'button' }) {
   return (
-    <button onClick={onClick}
+    <button type={type} onClick={onClick}
       className={`btn h-10 gap-2 rounded-md px-4 text-[13px] font-semibold ${primary ? 'btn-primary' : 'border-base-300 bg-base-100 shadow-sm'} ${className}`}>
       {Icon && <Icon size={16} />}{children}
     </button>
@@ -158,32 +158,35 @@ export function ListScreen({ title, subtitle, actions, placeholder = 'Search by 
 
 export const rowsOf = (keys, data) => data.map((vals, i) => ({ id: i + 1, ...Object.fromEntries(keys.map((k, j) => [k, vals[j]])) }))
 
-export function Actions({ view = true, edit = true, del = true }) {
+// onDelete(row): the bin icon removes the row (after a confirm).
+export function Actions({ view = true, edit = true, del = true, row, onDelete }) {
+  const drop = () => onDelete && window.confirm('Delete this record?') && onDelete(row)
   return (
     <span className="flex justify-end gap-3 text-base-content/80">
       {view && <Eye size={15} className="cursor-pointer" />}
       {edit && <Pencil size={15} className="cursor-pointer" />}
-      {del && <Trash2 size={15} className="cursor-pointer" />}
+      {del && <Trash2 size={15} className="cursor-pointer hover:text-rose-500" onClick={drop} />}
     </span>
   )
 }
 
 export const statusCol = { key: 'status', label: 'Status', sortable: true, render: (r) => <span className={`rounded px-2 py-0.5 text-[11px] ${r.status === 'Active' ? 'bg-emerald-500 text-white' : 'bg-base-300'}`}>{r.status}</span> }
-export const actionsCol = (opts) => ({ key: '_a', label: '', render: () => <Actions {...opts} /> })
+export const actionsCol = (opts) => ({ key: '_a', label: '', render: (r) => <Actions {...opts} row={r} /> })
 
-export function Drawer({ open, title, onClose, children, footer }) {
+export function Drawer({ open, title, onClose, children, footer, onSubmit }) {
   if (!open) return null
+  const Box = onSubmit ? 'form' : 'div'
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="relative flex h-full w-full max-w-[38%] min-w-96 flex-col bg-base-100 px-8 shadow-xl">
+      <Box onSubmit={onSubmit} className="relative flex h-full w-full max-w-[38%] min-w-96 flex-col bg-base-100 px-8 shadow-xl">
         <div className="flex items-center justify-between border-b border-base-300 py-5">
           <h2 className="text-lg font-bold">{title}</h2>
-          <button onClick={onClose}><X size={18} /></button>
+          <button type="button" onClick={onClose}><X size={18} /></button>
         </div>
         <div className="flex-1 overflow-y-auto py-5">{children}</div>
         {footer && <div className="flex justify-end gap-2 border-t border-base-300 py-5">{footer}</div>}
-      </div>
+      </Box>
     </div>
   )
 }

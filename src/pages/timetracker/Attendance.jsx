@@ -1,12 +1,13 @@
-// Shift groups, roster, reports hub and attendance-control screens.
+// Shift groups, roster, reports hub and time adjustment screens.
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Pencil, Download, FileText, Upload, SlidersHorizontal, Filter, Lock, LockOpen, ChevronDown, Plus, Info, CalendarDays, Fingerprint, ArrowLeft, Check } from 'lucide-react'
 import { Page, Btn, SearchBox, DataTable, Badge, Person } from '../../components/table'
 import { Avatar } from '../../components/ui'
-import { AddModal, AddDrawer, FormGrid, useOpen } from '../../components/forms'
+import { AddModal, AddDrawer, FormGrid, useOpen, toast } from '../../components/forms'
+import { useRows, val } from '../../data/store'
 import { employees, emp } from '../../data/people'
-import { applicable, shiftRows } from './Setup'
+import { applicable, applicableOf, shiftRows, GroupCards, groupOf } from './Setup'
 
 const DateField = ({ label, value, type = 'date', w = 'w-44' }) => (
   <label className="text-[11px] font-semibold">{label}<input type={type} defaultValue={value} className={`input mt-1 block ${w}`} /></label>
@@ -14,30 +15,23 @@ const DateField = ({ label, value, type = 'date', w = 'w-44' }) => (
 
 export function ShiftGroups() {
   const [open, show, hide] = useOpen()
-  const groups = [['Worker', 'All Department.', 'All Designation.', 'All Category.', 'All Location.', true], ['Security Rotation', 'Male Security, Female Security.', 'Security Officer.', 'Employee.', 'Head Office.', true]]
+  const [shifts] = useRows('shifts', shiftRows)
+  const [groups, addGroup] = useRows('shiftGroups', () => [
+    groupOf('Worker', ['All Department.', 'All Designation.', 'All Category.', 'All Location.']),
+    groupOf('Security Rotation', ['Male Security, Female Security.', 'Security Officer.', 'Employee.', 'Head Office.']),
+  ].map((g, i) => ({ id: i + 1, ...g })))
+  const save = (v) => addGroup(groupOf(val(v.Name), applicableOf(v), true, [['Shift', val(v.Shift)], ['Week Off', val(v['Week Off'])]]))
   return (
     <Page title="Shift Group" actions={<Btn primary onClick={show}>Add Shift Group</Btn>}>
-      <AddDrawer open={open} onClose={hide} title="Add Shift Group">
+      <AddDrawer open={open} onClose={hide} title="Add Shift Group" onSave={save}>
         <FormGrid cols={2} fields={[
-          { label: 'Name', span: true }, { label: 'Shift', type: 'select', placeholder: 'None', options: shiftRows.map((r) => r.name) },
+          { label: 'Name', span: true }, { label: 'Shift', type: 'select', placeholder: 'None', options: shifts.map((r) => r.name) },
           { label: 'Week Off', type: 'select', placeholder: 'None', options: ['Sunday', 'Saturday', 'Friday', 'Saturday, Sunday'] },
         ]} />
         <div className="mt-5 border-b border-base-300 pb-2 text-[13px] font-semibold">Applicable</div>
         <div className="mt-3"><FormGrid fields={applicable} /></div>
       </AddDrawer>
-      <div className="grid gap-3 md:grid-cols-2">
-        {groups.map(([name, d, des, c, l, on]) => (
-          <div key={name} className="rounded-lg bg-base-100 p-4 shadow-sm">
-            <div className="flex items-center justify-between border-b border-base-300 pb-3">
-              <h3 className="text-base font-bold">{name}</h3>
-              <span className="flex items-center gap-3"><input type="checkbox" className="toggle toggle-sm" defaultChecked={on} /><button className="btn btn-ghost btn-xs btn-square bg-base-200"><Pencil size={13} /></button></span>
-            </div>
-            <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-1 gap-y-1 text-xs">
-              {[['Department', d], ['Designation', des], ['Category', c], ['Location', l]].flatMap(([k, v]) => [<dt key={k} className="text-right font-medium">{k}:</dt>, <dd key={k + 'v'}>{v}</dd>])}
-            </dl>
-          </div>
-        ))}
-      </div>
+      <GroupCards groups={groups} action={<button className="btn btn-ghost btn-xs btn-square bg-base-200"><Pencil size={13} /></button>} />
     </Page>
   )
 }
@@ -46,11 +40,20 @@ const chip = { M07: 'bg-violet-500', WO: 'bg-blue-900', WFH: 'bg-green-700', MS:
 export function ShiftRoster() {
   const [q, setQ] = useState('')
   const days = Array.from({ length: 31 }, (_, i) => ({ d: i + 1, w: ['Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed'][i % 7] }))
-  const rows = employees.slice(0, 10).map((e, i) => ({
+  const [patterns] = useRows('rosterPatterns', [])
+  const [shifts] = useRows('shifts', shiftRows)
+  const color = Object.fromEntries(shifts.map((r) => [r.code, r.color]))
+  const base = employees.slice(0, 10).map((e, i) => ({
     ...e,
     pattern: i % 3 === 1 ? 'PAT&PAT13' : i === 2 ? 'work from home' : '-',
     cells: days.map((x, n) => (i % 3 === 1 ? (['Sat', 'Sun'].includes(x.w) ? 'WO' : 'M07') : i === 2 && n === 1 ? 'WFH' : i % 3 === 0 && i > 0 ? (x.w === 'Fri' ? 'WO' : n % 2 ? 'MS' : 'NS') : null)),
-  })).filter((r) => (r.name + r.code).toLowerCase().includes(q.toLowerCase()))
+  }))
+  // Saved patterns (newest first) override the roster of the employees they were assigned to.
+  const saved = patterns.flatMap((p) => p.empIds).filter((id) => !base.some((e) => e.id === id)).map((id) => ({ ...employees.find((e) => e.id === id), pattern: '-', cells: days.map(() => null) }))
+  const rows = [...saved, ...base].map((r) => {
+    const p = patterns.find((x) => x.empIds.includes(r.id))
+    return p ? { ...r, pattern: p.name, cells: days.map((x, n) => p.cells[x.d] || (p.override ? null : r.cells[n])) } : r
+  }).filter((r) => (r.name + r.code).toLowerCase().includes(q.toLowerCase()))
   return (
     <Page title="Shift Roster, Pattern" actions={<><Link to="/timetracker/roster/create"><Btn primary>Add Shift Pattern</Btn></Link><Btn primary>Edit Shift Pattern <ChevronDown size={14} /></Btn></>}>
       <div className="mb-2 flex flex-wrap items-end gap-2">
@@ -70,7 +73,7 @@ export function ShiftRoster() {
             <tr key={r.id} className="border-base-300">
               <td className="sticky left-0 z-10 bg-base-100"><div className="flex items-center gap-2"><Avatar name={r.name} color={r.color} /><div><b>{r.name}</b><div className="text-[10px] text-base-content/60">{r.code}</div></div></div></td>
               <td className="text-center font-semibold">{r.pattern}</td>
-              {r.cells.map((c, n) => <td key={n} className="text-center">{c ? <span className={`rounded px-1.5 py-1 text-[10px] font-bold text-white ${chip[c]}`}>{c === 'M07' ? 'M07:00' : c}</span> : '-'}</td>)}
+              {r.cells.map((c, n) => <td key={n} className="text-center">{c ? <span className={`rounded px-1.5 py-1 text-[10px] font-bold text-white ${chip[c] || ''}`} style={chip[c] ? {} : { background: color[c] || '#6b7280' }}>{c === 'M07' ? 'M07:00' : c}</span> : '-'}</td>)}
             </tr>
           ))}</tbody>
         </table>
@@ -80,16 +83,9 @@ export function ShiftRoster() {
 }
 
 const reportGroups = [
-  ['Attendance', ['Geo Tracking Report', 'Daily Report', 'Monthly Report', 'Late Report', 'Late Monthly Report', 'Late Summary Report', 'Concise Summary Report',
-    'Comprehensive Summary Report', 'Muster Report', 'Mobile Attendance Report', 'OT Employee Wise Summary Report', 'OT Summary Report', 'Daily Present Report',
-    'Daily Absent Report', 'Punch Request Report', 'TimeLog Report', 'Long Absence Report', 'Punch Movement Report', 'Absent with Punch Report',
-    'Manual Record Report', 'Invalid TimeLog Report', 'No Punch Report', 'Shift Count Report', 'Yearly Report', 'Attendance Percentage Report', 'List of Logs Report']],
-  ['Employee', ['Employee Joining Report', 'Employee Wise Report', 'Department Wise Report', 'Omanization Status Report', 'Employee Document Expiry Report']],
-  ['Late Policy', ['Late Policy Deduction Report']],
-  ['Zone', ['Employee Movement Report', 'Zone Occupancy Report', 'Location Transfer Report', 'Invalid Zone Report']],
-  ['Leave', ['Encashment Statement Report', 'Leave Balance Report', 'Leave Tracker', 'Monthly Leave Report', 'Leave Application Report', 'Leave Slab Report']],
-  ['Permission', ['Permission Report']],
-  ['Organization', ['New Employees Report', 'Exit Employees Report', 'Attrition Summary Report']],
+  ['Attendance', ['Daily Report', 'Monthly Report', 'Late Report', 'Late Monthly Report', 'Late Summary Report', 'Comprehensive Summary Report',
+    'Muster Report', 'TimeLog Report', 'Manual Record Report', 'Invalid TimeLog Report']],
+  ['Leave', ['Leave Balance Report', 'Leave Application Report']],
 ]
 
 export function ReportsHub({ title = 'TimeTracker Reports', groups = reportGroups }) {
@@ -125,7 +121,7 @@ function ReportModal({ name, onClose }) {
         <div className="mb-3 flex flex-wrap items-end gap-2">
           <DateField label="From" value="2026-10-01" /><DateField label="To" value="2026-10-31" />
           <label className="text-[11px] font-semibold">Department<select className="select mt-1 block w-44"><option>All Departments</option></select></label>
-          <Btn primary icon={Filter}>Generate</Btn><Btn icon={Download}>Excel</Btn><Btn icon={FileText}>PDF</Btn>
+          <Btn primary icon={Filter} onClick={() => toast(`${name} generated`)}>Generate</Btn><Btn icon={Download}>Excel</Btn><Btn icon={FileText}>PDF</Btn>
         </div>
         <table className="table table-sm text-xs">
           <thead><tr><th>Employee</th><th>Code</th><th>Department</th><th>Present</th><th>Absent</th><th>Late</th></tr></thead>
@@ -136,71 +132,26 @@ function ReportModal({ name, onClose }) {
   )
 }
 
-export function ExcludeLate() {
-  const [q, setQ] = useState('')
-  const rows = [[0, '01/10/2026', 'MAD1', '04:00', '', '', 'Not Excluded', 'Policy Excluded'], [0, '02/10/2026', 'MAD1', '02:00', '', '04:00', 'Not Excluded', 'Deductible (4h)'],
-    [3, '12/10/2026', 'MAD1', '08:01', '', '', 'Not Excluded', 'Policy Excluded'], [7, '14/10/2026', 'MAD2', '06:50', '', '', 'Not Excluded', 'Policy Excluded'],
-    [11, '16/10/2026', 'MS', '00:25', '00:10', '', 'Excluded', 'Policy Excluded']]
-    .map(([i, date, shift, late, early, ded, status, policy], n) => ({ ...emp(i), id: n + 1, date, shift: `${shift}`, late, early, ded, status, policy }))
-  return (
-    <Page title="Exclude Late Deduction">
-      <div className="mb-2 flex flex-wrap items-end gap-2">
-        <DateField label="From" value="2026-10-01" /><DateField label="To" value="2026-10-31" />
-        <label className="flex-1 text-[11px] font-semibold">Search<SearchBox value={q} onChange={setQ} placeholder="Search employee..." className="mt-1" /></label>
-        <Btn primary icon={Filter}>Filter</Btn><Btn icon={SlidersHorizontal}>More Filter</Btn>
-      </div>
-      <DataTable rows={rows} query={q} searchKeys={['name', 'code']} columns={[
-        { key: 'date', label: 'Date' }, { key: 'name', label: 'Employee Name' }, { key: 'code', label: 'Employee Code' }, { key: 'shift', label: 'Shift' },
-        { key: 'late', label: 'Actual Late' }, { key: 'early', label: 'Early Out' }, { key: 'ded', label: 'Late Deduction' },
-        { key: 'status', label: 'Status', render: (r) => <span className={`rounded px-1.5 py-0.5 text-[10px] ${r.status === 'Excluded' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-500'}`}>{r.status}</span> },
-        { key: 'policy', label: 'Policy Status', render: (r) => <span className={`rounded px-1.5 py-0.5 text-[10px] ${r.policy.startsWith('Deduct') ? 'bg-rose-50 text-rose-500' : 'bg-base-200'}`}>{r.policy}</span> },
-      ]} />
-    </Page>
-  )
-}
-
-export function LockAttendance() {
-  const locks = [['01 Sep 2026 → 30 Sep 2026', true], ['01 Apr 2026 → 30 Apr 2026', true], ['01 Apr 2026 → 24 May 2026', false]]
-  const [open, setOpen] = useState(null)
-  return (
-    <Page title="Lock Attendance">
-      <div className="space-y-3 rounded-lg bg-base-100 p-3 shadow-sm">
-        <select className="select w-full text-xs"><option>Select location</option><option>Head Office</option><option>Regional Office</option></select>
-        <div className="flex flex-wrap items-end gap-2 rounded-lg bg-base-200/60 p-3">
-          <DateField label="From" value="2026-10-01" /><DateField label="To" value="2026-10-23" />
-          <div className="flex-1" /><Btn primary icon={Lock}>Lock</Btn>
-        </div>
-        <div className="rounded-md bg-base-200/60 p-3 text-[11px] text-base-content/70"><b>Note:</b> Attendance records will be locked for the selected period. Please note that the lock will be applied to all employees in the selected locations. The chosen input matched records will be highlighted in green.</div>
-        <div className="divide-y divide-base-300 rounded-lg border border-base-300">
-          {locks.map(([range, locked], i) => (
-            <div key={range}>
-              <button onClick={() => setOpen(open === i ? null : i)} className="flex w-full items-center gap-3 px-3 py-3 text-[13px] font-semibold">
-                {locked ? <Lock size={14} className="opacity-60" /> : <LockOpen size={14} className="opacity-60" />}<span className="flex-1 text-left">{range}</span><ChevronDown size={15} className={open === i ? 'rotate-180' : ''} />
-              </button>
-              {open === i && <div className="px-9 pb-3 text-xs text-base-content/70">Locations: Head Office, Regional Office · Locked by HR Admin on {range.slice(-11)} · {locked ? <Badge>Locked</Badge> : <Badge>Open</Badge>}</div>}
-            </div>
-          ))}
-        </div>
-      </div>
-    </Page>
-  )
-}
-
 export function TimeAdjustment() {
   const [open, show, hide] = useOpen()
-  const rows = [[2, '05-10-2026', '09:42 AM', '09:00 AM', 'Device sync delay'], [6, '09-10-2026', '-', '06:05 PM', 'Missed out punch'], [10, '15-10-2026', '10:15 AM', '09:30 AM', 'Client meeting']]
-    .map(([i, date, before, after, reason], n) => ({ ...emp(i), id: n + 1, date, before, after, reason }))
+  const [rows, addRow] = useRows('timeAdjustments', () => [[2, '05-10-2026', '09:42 AM', '09:00 AM', 'Device sync delay'], [6, '09-10-2026', '-', '06:05 PM', 'Missed out punch'], [10, '15-10-2026', '10:15 AM', '09:30 AM', 'Client meeting']]
+    .map(([i, date, before, after, reason], n) => ({ ...emp(i), id: n + 1, date, before, after, reason })))
+  const people = employees.slice(0, 10)
+  const save = (v) => {
+    const e = people.find((p) => p.name === v.Employee) || emp(0)
+    addRow({ ...e, date: val(v.Date && v.Date.split('-').reverse().join('-')), before: val(v['Original Time']), after: val(v['Adjusted Time']), reason: val(v.Reason) })
+  }
   return (
     <Page title="Manual Time Adjustments">
-      <AddModal open={open} onClose={hide} title="Add Time Adjustment" cols={2} fields={[
-        { label: 'Employee', type: 'select', placeholder: 'Select Employee', options: employees.slice(0, 10).map((e) => e.name), span: true, req: true },
+      <AddModal open={open} onClose={hide} title="Add Time Adjustment" cols={2} onSave={save} fields={[
+        { label: 'Employee', type: 'select', placeholder: 'Select Employee', options: people.map((e) => e.name), span: true, req: true },
         { label: 'Date', type: 'date', req: true }, { label: 'Punch Type', type: 'radio', options: ['IN', 'OUT'], value: 'IN' },
         { label: 'Original Time', type: 'time' }, { label: 'Adjusted Time', type: 'time', req: true },
         { label: 'Reason', type: 'textarea', span: true },
       ]} />
       <div className="mb-2 flex flex-wrap items-end gap-2">
         <DateField label="From" value="2026-10-01" /><DateField label="To" value="2026-10-31" />
-        <label className="flex-1 text-[11px] font-semibold">Employee<select className="select mt-1 block w-full"><option>Search ...</option>{employees.slice(0, 10).map((e) => <option key={e.id}>{e.name}</option>)}</select></label>
+        <label className="flex-1 text-[11px] font-semibold">Employee<select className="select mt-1 block w-full"><option>Search ...</option>{people.map((e) => <option key={e.id}>{e.name}</option>)}</select></label>
         <Btn primary icon={Filter}>Filter</Btn><Btn icon={Plus} onClick={show}>Add</Btn><Btn className="px-3"><Info size={15} /></Btn>
       </div>
       <DataTable rows={rows} selectable={false} columns={[
@@ -211,131 +162,30 @@ export function TimeAdjustment() {
   )
 }
 
-export function AttendanceUploads() {
-  const [q, setQ] = useState('')
-  const rows = employees.slice(0, 12).map((e, i) => ({ ...e, present: 22 - (i % 3), absent: i % 3, leave: i % 2, ot: `${(i % 5) * 2}:00`, uploaded: '05-10-2026' }))
-  return (
-    <Page title="Monthly Upload">
-      <div className="mb-2 flex flex-wrap items-end gap-2">
-        <DateField label="Month" type="month" value="2026-10" />
-        <SearchBox value={q} onChange={setQ} placeholder="Search by Name, Code" className="flex-1" />
-        <Btn primary icon={Filter}>Filter</Btn><Btn icon={Upload}>Import</Btn><Btn>Download <ChevronDown size={14} /></Btn><Btn icon={SlidersHorizontal}>More Filter</Btn>
-      </div>
-      <DataTable rows={rows} query={q} searchKeys={['name', 'code']} columns={[
-        { key: 'name', label: 'Employee', sortable: true, render: (e) => <Person e={e} badges={<span className="text-[11px] text-base-content/60">{e.code}</span>} /> },
-        { key: 'present', label: 'Present Days' }, { key: 'absent', label: 'Absent Days' }, { key: 'leave', label: 'Leave Days' }, { key: 'ot', label: 'OT Hours' }, { key: 'uploaded', label: 'Uploaded On' },
-      ]} />
-    </Page>
-  )
-}
-
-export function LatePolicySetup() {
-  const [open, show, hide] = useOpen()
-  const policies = [
-    { name: 'Random Sequence 1 days', type: 'random', unit: 'Days', limit: 1, deduction: 'Half Day', priority: 'Annual Leave, Sick Leave' },
-    { name: 'Continuous 3 days', type: 'continuous', unit: 'Days', limit: 3, deduction: 'Full Day', priority: 'Annual Leave' },
-  ]
-  return (
-    <Page title="Late Policies" actions={<Btn primary icon={Plus} onClick={show}>Add Late Policy</Btn>}>
-      <AddDrawer open={open} onClose={hide} title="Add Late Policy" cols={2} fields={[
-        { label: 'Type', type: 'select', placeholder: 'Select', options: ['random', 'continuous'] }, { label: 'Day Limit', type: 'number' },
-        { label: 'Deduction Type', type: 'radio', options: ['Days'] }, { label: 'Deduction Value (Hours)', type: 'number' },
-        { label: 'Leave Deduction Priority', type: 'section', line: true },
-        { label: 'Leave Priority Order (e.g. PL, CL, SL)', type: 'multi', placeholder: '', options: ['Annual Leave', 'Sick Leave', 'Casual Leave'], span: true, hint: 'Select leaves in the order they should be deducted' },
-      ]} />
-      <div className="grid gap-3 md:grid-cols-2">
-        {policies.map((p) => (
-          <div key={p.name} className="rounded-lg bg-base-100 p-4 shadow-sm">
-            <div className="flex items-center justify-between border-b border-base-300 pb-3">
-              <h3 className="text-base font-bold">{p.name}</h3>
-              <span className="flex items-center gap-3"><input type="checkbox" className="toggle toggle-sm" defaultChecked /><Pencil size={15} /></span>
-            </div>
-            <dl className="mt-3 grid grid-cols-2 gap-y-2 text-xs">
-              {[['Type', p.type], ['Unit', p.unit], ['Day limit', p.limit], ['Deduction', p.deduction], ['Leave priority', p.priority]].flatMap(([k, v]) => [
-                <dt key={k} className="text-base-content/60">{k}</dt>, <dd key={k + 'v'} className="font-medium">{v}</dd>])}
-            </dl>
-          </div>
-        ))}
-      </div>
-    </Page>
-  )
-}
-
-export function ProcessLeaveCredits() {
-  const [q, setQ] = useState('')
-  const [sel, setSel] = useState(new Set())
-  const list = employees.filter((e) => (e.name + e.code).toLowerCase().includes(q.toLowerCase()))
-  const toggle = (id) => setSel((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n })
-  return (
-    <Page title="Process Leave Credits">
-      <div className="mb-3 rounded-lg bg-base-100 p-3 shadow-sm">
-        <div className="mb-2 flex items-center justify-between text-xs font-bold">Filters<Btn primary icon={Filter} className="h-8">Filter</Btn></div>
-        <div className="grid gap-2 md:grid-cols-3">
-          <DateField label="Month" type="month" value="2026-10" w="w-full" />
-          {['Department', 'Designations', 'Categories', 'Locations', 'Vendor'].map((m) => <label key={m} className="text-[11px] font-semibold">{m}<select className="select mt-1 block w-full"><option>0 selected</option></select></label>)}
-        </div>
-        <div className="mt-3 flex gap-2"><SearchBox value={q} onChange={setQ} placeholder="Search" className="flex-1" /><Btn primary>Process Leave Credits</Btn></div>
-      </div>
-      <div className="rounded-lg bg-base-100 p-3 shadow-sm">
-        <div className="mb-2 flex items-center gap-3 text-xs">
-          <span className="font-semibold">Selected Employees {sel.size}</span>
-          <button className="btn btn-xs" onClick={() => setSel(new Set(list.map((e) => e.id)))}>All</button>
-          <button className="btn btn-xs" onClick={() => setSel(new Set(list.slice(0, 10).map((e) => e.id)))}>Page</button>
-          <span className="ml-auto text-base-content/60">Found {list.length} employees</span>
-        </div>
-        <div className="grid gap-1 md:grid-cols-3">
-          {list.map((e) => (
-            <label key={e.id} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] hover:bg-base-200">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-primary" checked={sel.has(e.id)} onChange={() => toggle(e.id)} />{e.name} ({e.code})
-            </label>
-          ))}
-        </div>
-      </div>
-    </Page>
-  )
-}
-
-export function ZoneReports() {
-  const [q, setQ] = useState('')
-  const rows = [[0, 'Reception', 'IN', 'Biometric', 'Main Gate', '23-10-2026 09:02', 'Valid'], [0, 'Server Room', 'IN', 'Camera', 'CAM-01', '23-10-2026 10:12', 'Valid'],
-    [4, 'Warehouse', 'IN', 'Biometric', 'Basement', '23-10-2026 09:40', 'Valid'], [4, 'Warehouse', 'OUT', 'Biometric', 'Block B Exit', '23-10-2026 13:05', 'Valid'],
-    [9, 'Server Room', 'IN', 'Camera', 'CAM-01', '23-10-2026 11:20', 'Invalid']]
-    .map(([i, zone, dir, src, dev, at, status], n) => ({ ...emp(i), id: n + 1, zone, dir, src, dev, at, status }))
-  return (
-    <Page title="Zone Telemetry Reports & Analytics" subtitle="Real-time movement reports, active zone counts, and verification audits" actions={<Btn icon={Download}>Export Excel</Btn>}>
-      <div className="mb-3 rounded-lg bg-base-100 p-3 shadow-sm">
-        <div className="mb-2 text-[11px] font-bold uppercase text-base-content/60">Unified Filtering Matrix</div>
-        <div className="grid gap-2 md:grid-cols-3">
-          <label className="text-[11px] font-semibold">Employee Name / Code<SearchBox value={q} onChange={setQ} placeholder="Search" className="mt-1" /></label>
-          <DateField label="From Date" value="2026-10-01" w="w-full" /><DateField label="To Date" value="2026-10-23" w="w-full" />
-          {[['Physical Location', 'All Locations', 'Head Office', 'Development Center', 'Regional Office'], ['Target Zone', 'All Zones', 'Reception', 'Server Room', 'Warehouse'], ['Department', 'All Departments', 'Finance', 'Human Resources']].map(([l, ...o]) => (
-            <label key={l} className="text-[11px] font-semibold">{l}<select className="select mt-1 block w-full">{o.map((x) => <option key={x}>{x}</option>)}</select></label>
-          ))}
-        </div>
-      </div>
-      <DataTable rows={rows} query={q} searchKeys={['name', 'code']} selectable={false} columns={[
-        { key: 'name', label: 'Employee' }, { key: 'code', label: 'Code' }, { key: 'zone', label: 'Zone Name' },
-        { key: 'dir', label: 'Direction', render: (r) => <span className={`rounded px-2 py-0.5 text-[11px] ${r.dir === 'IN' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>{r.dir}</span> },
-        { key: 'src', label: 'Source' }, { key: 'dev', label: 'Device / Camera' }, { key: 'at', label: 'Logged At' },
-        { key: 'status', label: 'Status', render: (r) => <span className={`rounded px-2 py-0.5 text-[11px] ${r.status === 'Valid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}`}>{r.status}</span> },
-      ]} />
-    </Page>
-  )
-}
-
 // Add Shift Pattern: pick shifts into an October calendar, then choose employees by filter.
-const patternShifts = [['WO', 'Week Off (WO)', '', 'bg-blue-900'], ['WFH', 'Work From Home', '', 'bg-green-700'],
-  ...shiftRows.slice().reverse().map((r) => [r.code, r.name, `${r.start} - ${r.end}`, ''])]
 export function ShiftPatternCreate() {
+  const go = useNavigate()
+  const [, addPattern] = useRows('rosterPatterns', [])
+  const [name, setName] = useState('')
+  const [override, setOverride] = useState(false)
   const [pick, setPick] = useState('WO')
   const [cells, setCells] = useState({})
   const [sel, setSel] = useState({})
   const [q, setQ] = useState('')
-  const color = Object.fromEntries(shiftRows.map((r) => [r.code, r.color]))
+  const [shifts] = useRows('shifts', shiftRows)
+  const patternShifts = [['WO', 'Week Off (WO)', '', 'bg-blue-900'], ['WFH', 'Work From Home', '', 'bg-green-700'],
+    ...shifts.slice().reverse().map((r) => [r.code, r.name, `${r.start} - ${r.end}`, ''])]
+  const color = Object.fromEntries(shifts.map((r) => [r.code, r.color]))
   const chipStyle = (code) => (color[code] ? { background: color[code] } : {})
   const chipClass = (code) => patternShifts.find((p) => p[0] === code)?.[3] || ''
   const days = Array.from({ length: 35 }, (_, i) => i - 3)
   const list = employees.filter((e) => (e.name + e.code).toLowerCase().includes(q.toLowerCase()))
+  const save = () => {
+    const empIds = employees.filter((e) => sel[e.id]).map((e) => e.id)
+    addPattern({ name: name.trim() || 'New Pattern', cells, empIds, override })
+    toast(`Roster saved for ${empIds.length} employee${empIds.length === 1 ? '' : 's'}`)
+    go('/timetracker/roster')
+  }
   const multi = (label, icon) => (
     <label className="text-[11px] font-semibold">{label}<select className="select select-sm mt-1 w-full"><option>{icon} 0 selected</option></select></label>
   )
@@ -344,7 +194,7 @@ export function ShiftPatternCreate() {
       <Link to="/timetracker/roster" className="mb-6 flex items-center gap-2 text-[13px] font-semibold"><ArrowLeft size={16} />Add Shift Pattern</Link>
       <div className="grid gap-3 rounded-lg bg-base-100 p-3 shadow-sm lg:grid-cols-2">
         <div className="rounded-md bg-base-200/50 p-3">
-          <input placeholder="# Name" className="input mb-3 w-full" />
+          <input placeholder="# Name" value={name} onChange={(e) => setName(e.target.value)} className="input mb-3 w-full" />
           <div className="mb-3 grid grid-cols-2 gap-2">
             <DateField label="From Date" value="2026-10-01" w="w-full" /><DateField label="To Date" value="2026-10-29" w="w-full" />
           </div>
@@ -392,9 +242,9 @@ export function ShiftPatternCreate() {
             </div>
           </div>
           <div className="mt-3 flex items-center justify-end gap-4">
-            <label className="flex items-start gap-2 text-xs"><input type="checkbox" className="checkbox checkbox-sm" />
+            <label className="flex items-start gap-2 text-xs"><input type="checkbox" className="checkbox checkbox-sm" checked={override} onChange={(e) => setOverride(e.target.checked)} />
               <span><b className="font-medium">Override existing rosters</b><span className="block text-[10px] text-base-content/60">Replace any conflicting shift assignments</span></span></label>
-            <Link to="/timetracker/roster"><Btn primary icon={Check}>Save Roster</Btn></Link>
+            <Btn primary icon={Check} onClick={save}>Save Roster</Btn>
           </div>
         </div>
       </div>

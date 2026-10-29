@@ -4,10 +4,11 @@ import {
   Menu, Search, VolumeX, Moon, Sun, Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDot,
 } from 'lucide-react'
 import { nav } from '../data/nav'
+import { Toaster } from './forms'
 
-// A list item also owns its "<path>/create" add page.
+// A list item also owns the pages under it ("<path>/create", "<path>/<id>").
 const containsPath = (item, path) =>
-  item.path === path || path === item.path + '/create' || (item.children || []).some((c) => containsPath(c, path))
+  item.path === path || path.startsWith(item.path + '/') || (item.children || []).some((c) => containsPath(c, path))
 
 function SubMenu({ items, depth }) {
   const { pathname } = useLocation()
@@ -96,15 +97,15 @@ function Header({ onMenu, dark, setDark }) {
   return (
     <header className="fixed inset-x-0 top-0 z-30 flex h-[57px] items-center gap-3 border-b border-base-300 bg-base-100 px-5">
       <button onClick={onMenu} className="btn btn-ghost btn-sm btn-square"><Menu size={18} strokeWidth={1.5} /></button>
-      <div className="grid size-6 place-items-center rounded-sm bg-indigo-900 text-[8px] font-bold text-white">IG</div>
-      <h2 className="text-lg font-black tracking-tight">IndiGo</h2>
+      <div className="grid h-6 w-9 place-items-center rounded-sm border border-base-300 text-[6px] font-bold leading-tight text-base-content/60">LOGO</div>
+      <h2 className="text-lg font-black tracking-tight">Company Name</h2>
       <div className="flex-1" />
       <label className="flex h-9 w-36 items-center gap-2 rounded-lg border border-base-300 bg-base-200/60 px-2.5 text-[13px] text-base-content/50">
         <Search size={14} />
         <span className="flex-1">Search...</span>
         <kbd className="rounded border border-base-300 px-1 text-[10px]">⌘ K</kbd>
       </label>
-      <span className="px-1 text-xs font-bold">EN</span>
+      <span className="px-1 text-xs font-bold">IN</span>
       <VolumeX size={17} strokeWidth={1.5} className="opacity-70" />
       <button onClick={() => setDark(!dark)} className="opacity-70">
         {dark ? <Sun size={16} strokeWidth={1.5} /> : <Moon size={16} strokeWidth={1.5} />}
@@ -128,6 +129,7 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+      <Toaster />
     </>
   )
 }

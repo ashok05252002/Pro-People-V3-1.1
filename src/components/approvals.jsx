@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Sparkles, Layers, Search, X, Calendar, ScanLine, CircleCheck, CircleX } from 'lucide-react'
 import { Page, Badge } from './table'
 import { Avatar } from './ui'
+import { toast } from './forms'
 
 /**
  * items: [{ id, e (employee), title?, lines: [[Icon, label?, value]], box?: [[label, value]] }]
@@ -12,6 +13,7 @@ export function ApprovalBoard({ title, items, locations = false, historyStatus =
   const [q, setQ] = useState('')
   const [order, setOrder] = useState('Newest')
   const [decided, setDecided] = useState({})
+  const decide = (it, status) => { setDecided((d) => ({ ...d, [it.id]: status })); toast(`${it.title || 'Request'} for ${it.e.name} ${status.toLowerCase()}`) }
   const pending = items.filter((i) => !decided[i.id])
   const history = [
     ...items.filter((i) => decided[i.id]).map((i) => ({ ...i, status: decided[i.id] })),
@@ -61,8 +63,8 @@ export function ApprovalBoard({ title, items, locations = false, historyStatus =
               <div className="flex gap-2 border-t border-base-300 pt-3">
                 {tab === 'new' ? (
                   <>
-                    <button onClick={() => setDecided((d) => ({ ...d, [it.id]: 'Approved' }))} className="btn btn-xs h-7 gap-1 border-emerald-500 bg-base-100 font-normal text-emerald-600"><CircleCheck size={13} />Accept</button>
-                    <button onClick={() => setDecided((d) => ({ ...d, [it.id]: 'Rejected' }))} className="btn btn-xs h-7 gap-1 border-rose-400 bg-base-100 font-normal text-rose-500"><CircleX size={13} />Reject</button>
+                    <button onClick={() => decide(it, 'Approved')} className="btn btn-xs h-7 gap-1 border-emerald-500 bg-base-100 font-normal text-emerald-600"><CircleCheck size={13} />Accept</button>
+                    <button onClick={() => decide(it, 'Rejected')} className="btn btn-xs h-7 gap-1 border-rose-400 bg-base-100 font-normal text-rose-500"><CircleX size={13} />Reject</button>
                   </>
                 ) : <Badge>{it.status}</Badge>}
               </div>
