@@ -1,18 +1,30 @@
 // Shift groups, roster, reports hub and attendance-control screens.
 import { useState } from 'react'
-import { Pencil, Download, FileText, Upload, SlidersHorizontal, Filter, Lock, LockOpen, ChevronDown, Plus, Info, CalendarDays, Fingerprint } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Pencil, Download, FileText, Upload, SlidersHorizontal, Filter, Lock, LockOpen, ChevronDown, Plus, Info, CalendarDays, Fingerprint, ArrowLeft, Check } from 'lucide-react'
 import { Page, Btn, SearchBox, DataTable, Badge, Person } from '../../components/table'
 import { Avatar } from '../../components/ui'
+import { AddModal, AddDrawer, FormGrid, useOpen } from '../../components/forms'
 import { employees, emp } from '../../data/people'
+import { applicable, shiftRows } from './Setup'
 
 const DateField = ({ label, value, type = 'date', w = 'w-44' }) => (
   <label className="text-[11px] font-semibold">{label}<input type={type} defaultValue={value} className={`input mt-1 block ${w}`} /></label>
 )
 
 export function ShiftGroups() {
+  const [open, show, hide] = useOpen()
   const groups = [['Worker', 'All Department.', 'All Designation.', 'All Category.', 'All Location.', true], ['Security Rotation', 'Male Security, Female Security.', 'Security Officer.', 'Employee.', 'Head Office.', true]]
   return (
-    <Page title="Shift Group" actions={<Btn primary>Add Shift Group</Btn>}>
+    <Page title="Shift Group" actions={<Btn primary onClick={show}>Add Shift Group</Btn>}>
+      <AddDrawer open={open} onClose={hide} title="Add Shift Group">
+        <FormGrid cols={2} fields={[
+          { label: 'Name', span: true }, { label: 'Shift', type: 'select', placeholder: 'None', options: shiftRows.map((r) => r.name) },
+          { label: 'Week Off', type: 'select', placeholder: 'None', options: ['Sunday', 'Saturday', 'Friday', 'Saturday, Sunday'] },
+        ]} />
+        <div className="mt-5 border-b border-base-300 pb-2 text-[13px] font-semibold">Applicable</div>
+        <div className="mt-3"><FormGrid fields={applicable} /></div>
+      </AddDrawer>
       <div className="grid gap-3 md:grid-cols-2">
         {groups.map(([name, d, des, c, l, on]) => (
           <div key={name} className="rounded-lg bg-base-100 p-4 shadow-sm">
@@ -40,7 +52,7 @@ export function ShiftRoster() {
     cells: days.map((x, n) => (i % 3 === 1 ? (['Sat', 'Sun'].includes(x.w) ? 'WO' : 'M07') : i === 2 && n === 1 ? 'WFH' : i % 3 === 0 && i > 0 ? (x.w === 'Fri' ? 'WO' : n % 2 ? 'MS' : 'NS') : null)),
   })).filter((r) => (r.name + r.code).toLowerCase().includes(q.toLowerCase()))
   return (
-    <Page title="Shift Roster, Pattern" actions={<><Btn primary>Add Shift Pattern</Btn><Btn primary>Edit Shift Pattern <ChevronDown size={14} /></Btn></>}>
+    <Page title="Shift Roster, Pattern" actions={<><Link to="/timetracker/roster/create"><Btn primary>Add Shift Pattern</Btn></Link><Btn primary>Edit Shift Pattern <ChevronDown size={14} /></Btn></>}>
       <div className="mb-2 flex flex-wrap items-end gap-2">
         <DateField label="Month Year" type="month" value="2026-10" />
         <label className="text-[11px] font-semibold">Search<SearchBox value={q} onChange={setQ} placeholder="Search Name, Code" className="mt-1 w-80" /></label>
@@ -175,14 +187,21 @@ export function LockAttendance() {
 }
 
 export function TimeAdjustment() {
+  const [open, show, hide] = useOpen()
   const rows = [[2, '05-10-2026', '09:42 AM', '09:00 AM', 'Device sync delay'], [6, '09-10-2026', '-', '06:05 PM', 'Missed out punch'], [10, '15-10-2026', '10:15 AM', '09:30 AM', 'Client meeting']]
     .map(([i, date, before, after, reason], n) => ({ ...emp(i), id: n + 1, date, before, after, reason }))
   return (
     <Page title="Manual Time Adjustments">
+      <AddModal open={open} onClose={hide} title="Add Time Adjustment" cols={2} fields={[
+        { label: 'Employee', type: 'select', placeholder: 'Select Employee', options: employees.slice(0, 10).map((e) => e.name), span: true, req: true },
+        { label: 'Date', type: 'date', req: true }, { label: 'Punch Type', type: 'radio', options: ['IN', 'OUT'], value: 'IN' },
+        { label: 'Original Time', type: 'time' }, { label: 'Adjusted Time', type: 'time', req: true },
+        { label: 'Reason', type: 'textarea', span: true },
+      ]} />
       <div className="mb-2 flex flex-wrap items-end gap-2">
         <DateField label="From" value="2026-10-01" /><DateField label="To" value="2026-10-31" />
         <label className="flex-1 text-[11px] font-semibold">Employee<select className="select mt-1 block w-full"><option>Search ...</option>{employees.slice(0, 10).map((e) => <option key={e.id}>{e.name}</option>)}</select></label>
-        <Btn primary icon={Filter}>Filter</Btn><Btn icon={Plus} className="opacity-60">Add</Btn><Btn className="px-3"><Info size={15} /></Btn>
+        <Btn primary icon={Filter}>Filter</Btn><Btn icon={Plus} onClick={show}>Add</Btn><Btn className="px-3"><Info size={15} /></Btn>
       </div>
       <DataTable rows={rows} selectable={false} columns={[
         { key: 'name', label: 'Employee', render: (e) => <Person e={e} badges={<span className="text-[11px] text-base-content/60">{e.code}</span>} /> },
@@ -211,12 +230,19 @@ export function AttendanceUploads() {
 }
 
 export function LatePolicySetup() {
+  const [open, show, hide] = useOpen()
   const policies = [
     { name: 'Random Sequence 1 days', type: 'random', unit: 'Days', limit: 1, deduction: 'Half Day', priority: 'Annual Leave, Sick Leave' },
     { name: 'Continuous 3 days', type: 'continuous', unit: 'Days', limit: 3, deduction: 'Full Day', priority: 'Annual Leave' },
   ]
   return (
-    <Page title="Late Policies" actions={<Btn primary icon={Plus}>Add Late Policy</Btn>}>
+    <Page title="Late Policies" actions={<Btn primary icon={Plus} onClick={show}>Add Late Policy</Btn>}>
+      <AddDrawer open={open} onClose={hide} title="Add Late Policy" cols={2} fields={[
+        { label: 'Type', type: 'select', placeholder: 'Select', options: ['random', 'continuous'] }, { label: 'Day Limit', type: 'number' },
+        { label: 'Deduction Type', type: 'radio', options: ['Days'] }, { label: 'Deduction Value (Hours)', type: 'number' },
+        { label: 'Leave Deduction Priority', type: 'section', line: true },
+        { label: 'Leave Priority Order (e.g. PL, CL, SL)', type: 'multi', placeholder: '', options: ['Annual Leave', 'Sick Leave', 'Casual Leave'], span: true, hint: 'Select leaves in the order they should be deducted' },
+      ]} />
       <div className="grid gap-3 md:grid-cols-2">
         {policies.map((p) => (
           <div key={p.name} className="rounded-lg bg-base-100 p-4 shadow-sm">
@@ -294,5 +320,84 @@ export function ZoneReports() {
         { key: 'status', label: 'Status', render: (r) => <span className={`rounded px-2 py-0.5 text-[11px] ${r.status === 'Valid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}`}>{r.status}</span> },
       ]} />
     </Page>
+  )
+}
+
+// Add Shift Pattern: pick shifts into an October calendar, then choose employees by filter.
+const patternShifts = [['WO', 'Week Off (WO)', '', 'bg-blue-900'], ['WFH', 'Work From Home', '', 'bg-green-700'],
+  ...shiftRows.slice().reverse().map((r) => [r.code, r.name, `${r.start} - ${r.end}`, ''])]
+export function ShiftPatternCreate() {
+  const [pick, setPick] = useState('WO')
+  const [cells, setCells] = useState({})
+  const [sel, setSel] = useState({})
+  const [q, setQ] = useState('')
+  const color = Object.fromEntries(shiftRows.map((r) => [r.code, r.color]))
+  const chipStyle = (code) => (color[code] ? { background: color[code] } : {})
+  const chipClass = (code) => patternShifts.find((p) => p[0] === code)?.[3] || ''
+  const days = Array.from({ length: 35 }, (_, i) => i - 3)
+  const list = employees.filter((e) => (e.name + e.code).toLowerCase().includes(q.toLowerCase()))
+  const multi = (label, icon) => (
+    <label className="text-[11px] font-semibold">{label}<select className="select select-sm mt-1 w-full"><option>{icon} 0 selected</option></select></label>
+  )
+  return (
+    <div className="mx-auto max-w-7xl">
+      <Link to="/timetracker/roster" className="mb-6 flex items-center gap-2 text-[13px] font-semibold"><ArrowLeft size={16} />Add Shift Pattern</Link>
+      <div className="grid gap-3 rounded-lg bg-base-100 p-3 shadow-sm lg:grid-cols-2">
+        <div className="rounded-md bg-base-200/50 p-3">
+          <input placeholder="# Name" className="input mb-3 w-full" />
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            <DateField label="From Date" value="2026-10-01" w="w-full" /><DateField label="To Date" value="2026-10-29" w="w-full" />
+          </div>
+          <div className="mb-3 max-h-56 space-y-1 overflow-y-auto rounded-md bg-base-100 p-2">
+            {patternShifts.map(([code, name, time]) => (
+              <label key={code} className="flex cursor-pointer items-start gap-3 rounded px-2 py-1.5 text-xs hover:bg-base-200">
+                <input type="radio" name="shift" className="radio radio-sm mt-0.5" checked={pick === code} onChange={() => setPick(code)} />
+                <span><b className="font-medium">{name}</b>{time && <span className="block text-[10px] text-base-content/60">{time}</span>}</span>
+              </label>
+            ))}
+          </div>
+          <div className="rounded-md bg-base-100 p-3">
+            <div className="mb-2 flex flex-wrap justify-center gap-1">
+              {patternShifts.map(([code]) => <span key={code} className={`rounded px-1 py-0.5 text-[10px] font-bold text-white ${chipClass(code)}`} style={chipStyle(code)}>{code}</span>)}
+            </div>
+            <div className="grid grid-cols-7 gap-1 text-center text-xs">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => <div key={d} className="font-semibold">{d}</div>)}
+              {days.map((d) => d < 1 || d > 29 ? <div key={d} /> : (
+                <button key={d} onClick={() => setCells((c) => ({ ...c, [d]: c[d] === pick ? undefined : pick }))}
+                  className="flex h-12 flex-col items-start rounded border border-base-300 p-1 text-[10px] text-base-content/60 hover:border-primary">
+                  {d}{cells[d] && <span className={`mt-auto self-center rounded px-1 font-bold text-white ${chipClass(cells[d])}`} style={chipStyle(cells[d])}>{cells[d]}</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col rounded-md bg-base-200/50 p-3">
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            {multi('Department', '▦')}{multi('Designation', '☆')}{multi('Categories', '⚇')}{multi('Locations', '⌖')}{multi('Vendor', '▣')}
+          </div>
+          <div className="flex flex-1 flex-col rounded-md bg-base-100 p-3">
+            <div className="mb-2 flex gap-2"><SearchBox value={q} onChange={setQ} placeholder="Search employees..." className="flex-1" /></div>
+            <div className="mb-1 flex items-center justify-between text-xs">
+              <span className="font-semibold">Selected Employees <span className="badge badge-primary badge-xs">{Object.values(sel).filter(Boolean).length}</span></span>
+              <label className="flex items-center gap-1"><input type="checkbox" className="checkbox checkbox-xs" onChange={(e) => setSel(Object.fromEntries(list.map((x) => [x.id, e.target.checked])))} />All</label>
+            </div>
+            <div className="mb-2 flex items-center gap-1 text-[11px] text-emerald-600"><Check size={12} />Found {list.length} employees</div>
+            <div className="grid max-h-80 gap-x-3 overflow-y-auto sm:grid-cols-2">
+              {list.map((e) => (
+                <label key={e.id} className="flex items-center gap-2 py-1.5 text-xs">
+                  <input type="checkbox" className="checkbox checkbox-sm" checked={!!sel[e.id]} onChange={(ev) => setSel((s) => ({ ...s, [e.id]: ev.target.checked }))} />
+                  {e.name} <span className="text-[10px] text-base-content/50">({e.code})</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="mt-3 flex items-center justify-end gap-4">
+            <label className="flex items-start gap-2 text-xs"><input type="checkbox" className="checkbox checkbox-sm" />
+              <span><b className="font-medium">Override existing rosters</b><span className="block text-[10px] text-base-content/60">Replace any conflicting shift assignments</span></span></label>
+            <Link to="/timetracker/roster"><Btn primary icon={Check}>Save Roster</Btn></Link>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

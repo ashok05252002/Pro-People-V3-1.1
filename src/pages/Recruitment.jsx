@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Sparkles, Archive, Calendar, Users, Download, FileText, Plus, Trash2, MapPin, Clock } from 'lucide-react'
 import { Page, Btn, SearchBox, DataTable, Badge, Person, rowsOf, actionsCol } from '../components/table'
 import { Avatar } from '../components/ui'
+import { AddModal, useOpen } from '../components/forms'
+import { departments, locations } from '../data/people'
 
 const candidates = rowsOf(['name', 'code', 'email', 'phone', 'source', 'color'], [
   ['Aravind Krishnan', 'CAN-001', 'aravind.k@mail.com', '+91 9840010001', 'LinkedIn', '#2563eb'],
@@ -24,9 +26,16 @@ const closed = [
 export function Interviews() {
   const [tab, setTab] = useState('open')
   const [order, setOrder] = useState('Newest')
+  const [open, show, hide] = useOpen()
   const list = tab === 'open' ? interviews : closed
   return (
-    <Page title="Interviews" actions={<Btn primary>Add New</Btn>}>
+    <Page title="Interviews" actions={<Btn primary onClick={show}>Add New</Btn>}>
+      <AddModal open={open} onClose={hide} title="Create Interview" cols={2} size="max-w-2xl" fields={[
+        { label: 'Recruiter' }, { label: 'Title', placeholder: 'Select a Title' },
+        { label: 'Stages', hint: 'Can be edited before the interview start date.' }, { label: 'Starting Date', type: 'date' },
+        { label: 'Closing Date', type: 'date' }, { label: 'Hiring', type: 'select', placeholder: 'Select a Hiring', options: departments },
+        { label: 'Location', type: 'select', placeholder: 'Select a Location', options: locations }, { label: 'Languages' },
+      ]} />
       <div className="mb-3 flex gap-1 border-b border-base-300 text-xs">
         {[['open', 'Interviews', Sparkles], ['closed', 'Closed Interviews', Archive]].map(([k, l, I]) => (
           <button key={k} onClick={() => setTab(k)} className={`-mb-px flex items-center gap-2 border-b-2 px-3 py-2 ${tab === k ? 'border-base-content font-semibold' : 'border-transparent text-base-content/60'}`}><I size={14} />{l}</button>
@@ -94,12 +103,16 @@ export function LoiHistory() {
 
 export function Candidates() {
   const [q, setQ] = useState('')
+  const [open, show, hide] = useOpen()
   return (
     <Page title="Candidates">
+      <AddModal open={open} onClose={hide} title="Add Candidate" cols={2} size="max-w-2xl" fields={[
+        { label: 'Name' }, { label: 'Candidate Code' }, { label: 'Email', type: 'email' }, { label: 'Contact Number', type: 'tel' }, { label: 'Source' },
+      ]} />
       <div className="mb-2 flex flex-wrap gap-2">
         <SearchBox value={q} onChange={setQ} placeholder="Search by Name, Code" className="min-w-72 flex-1" />
         <Btn icon={Download}>Import</Btn><Btn icon={Download}>Export</Btn><Btn icon={FileText}>Template</Btn>
-        <Btn primary className="px-3"><Plus size={16} /></Btn>
+        <Btn primary className="px-3" onClick={show}><Plus size={16} /></Btn>
         <Btn className="px-3 opacity-50"><Trash2 size={16} /></Btn>
       </div>
       <DataTable rows={candidates} query={q} searchKeys={['name', 'code']} selectable={false} columns={[

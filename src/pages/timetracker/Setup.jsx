@@ -2,7 +2,18 @@
 import { useState } from 'react'
 import { Download, Upload, Filter, Plus, FileText, SlidersHorizontal, CircleArrowRight, ScanLine, Pencil, Trash2, CalendarDays, Tag, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Page, Btn, SearchBox, DataTable, Badge, Person, rowsOf, statusCol, actionsCol } from '../../components/table'
-import { emp } from '../../data/people'
+import { AddModal, FormGrid, useOpen } from '../../components/forms'
+import { emp, designations, departments, categories, locations } from '../../data/people'
+
+const brands = ['ZKTECO', 'ESSL', 'HIKVISION', 'SUPREMA']
+const punchType = { label: 'Punch Type', type: 'radio', options: ['COMBINED', 'IN', 'OUT'], value: 'COMBINED' }
+// "All X" multi-selects shared by leave groups, holidays and shift groups.
+export const applicable = [
+  { label: 'Designation', type: 'multi', placeholder: 'All Designations', options: designations },
+  { label: 'Department', type: 'multi', placeholder: 'All Departments', options: departments },
+  { label: 'Category', type: 'multi', placeholder: 'All Categories', options: categories },
+  { label: 'Location', type: 'multi', placeholder: 'All Locations', options: locations },
+]
 
 const editDel = actionsCol({ view: false })
 
@@ -28,10 +39,16 @@ const devices = rowsOf(['n', 'name', 'serial', 'punch', 'brand', 'zone', 'group'
 ])
 
 export function ProsyncDevices() {
+  const [open, show, hide] = useOpen()
   const { q, bar } = SearchRow({ placeholder: 'Search by Device Name', hint: 'Search by Device Name or Device Code or Brand Name',
     children: <select className="select h-10 w-44 text-xs font-semibold"><option>All Device Groups</option><option>Head Office</option><option>Regional</option></select> })
   return (
-    <Page title="Devices (ProSync)" actions={<><Btn icon={Download} className="border-base-content">Export</Btn><Btn primary>Add Device</Btn></>}>
+    <Page title="Devices (ProSync)" actions={<><Btn icon={Download} className="border-base-content">Export</Btn><Btn primary onClick={show}>Add Device</Btn></>}>
+      <AddModal open={open} onClose={hide} title="Add Device" fields={[
+        { label: 'Device Group', type: 'select', placeholder: 'Select', options: ['Head Office', 'Regional'] }, { label: 'Name' },
+        { label: 'Device Code (Serial No)' }, { label: 'Brand Name', type: 'select', placeholder: 'Select Brand Name', options: brands },
+        { label: 'Master Device', type: 'check' }, punchType,
+      ]} />
       {bar}
       <DataTable rows={devices} query={q} searchKeys={['name', 'serial', 'brand']} selectable={false} columns={[
         { key: 'name', label: 'Device Name' }, { key: 'serial', label: 'Device Code' }, { key: 'brand', label: 'Brand' }, { key: 'group', label: 'Device Group' },
@@ -42,9 +59,13 @@ export function ProsyncDevices() {
 }
 
 export function BiometricDevices() {
+  const [open, show, hide] = useOpen()
   const { q, bar } = SearchRow({ placeholder: 'Search by Device Name', hint: 'Search by Device Name or Device Code or Brand Name', children: <><Btn primary icon={Filter}>Filter</Btn><Btn icon={Download}>Download</Btn></> })
   return (
-    <Page title="Biometric Devices" actions={<Btn primary>Add Device</Btn>}>
+    <Page title="Biometric Devices" actions={<Btn primary onClick={show}>Add Device</Btn>}>
+      <AddModal open={open} onClose={hide} title="Add Device" fields={[
+        { label: 'Name' }, { label: 'Device Code' }, { label: 'Brand Name', type: 'select', placeholder: 'Select Brand Name', options: brands }, { ...punchType, value: undefined },
+      ]} />
       {bar}
       <DataTable rows={devices} query={q} searchKeys={['name', 'serial', 'brand']} selectable={false} columns={[
         { key: 'n', label: 'ID' }, { key: 'name', label: 'Name' }, { key: 'serial', label: 'Serial No' }, { key: 'punch', label: 'Punch Type' },
@@ -55,8 +76,10 @@ export function BiometricDevices() {
 }
 
 export function DeviceGroups() {
+  const [open, show, hide] = useOpen()
   return (
-    <Page title="Device Group (ProSync)" actions={<Btn primary>Add Device Group</Btn>}>
+    <Page title="Device Group (ProSync)" actions={<Btn primary onClick={show}>Add Device Group</Btn>}>
+      <AddModal open={open} onClose={hide} title="Add Device Group" size="max-w-md" fields={[{ label: 'Group Name' }]} />
       <DataTable selectable={false} rows={rowsOf(['name', 'devices', 'employees', 'status'], [['Head Office', 3, 34, 'Active'], ['Regional', 1, 15, 'Active']])} columns={[
         { key: 'name', label: 'Group Name' }, { key: 'devices', label: 'Devices' }, { key: 'employees', label: 'Employees' }, statusCol, editDel,
       ]} />
@@ -65,9 +88,13 @@ export function DeviceGroups() {
 }
 
 export function Cameras() {
+  const [open, show, hide] = useOpen()
   const { q, bar } = SearchRow({ placeholder: 'Search name or code...', narrow: true })
   return (
-    <Page title="Cameras" actions={<Btn primary>Add Camera</Btn>}>
+    <Page title="Cameras" actions={<Btn primary onClick={show}>Add Camera</Btn>}>
+      <AddModal open={open} onClose={hide} title="Add Camera" fields={[
+        { label: 'Camera Name', req: true }, { label: 'UUID / Device Code', req: true }, { label: 'Is Active', type: 'toggle', value: true },
+      ]} />
       {bar}
       <DataTable rows={rowsOf(['name', 'code', 'ip', 'zone', 'status'], [['Lobby Cam', 'CAM-01', '192.168.1.21', 'Reception', 'Online'], ['Dock Cam', 'CAM-02', '192.168.1.22', 'Warehouse', 'Offline']])}
         query={q} searchKeys={['name', 'code']} selectable={false} columns={[
@@ -78,10 +105,25 @@ export function Cameras() {
   )
 }
 
+const hwSelect = (label, what, options) => ({ label, type: 'select', placeholder: 'Select ' + what + '...', options })
 export function ZoneMapping() {
-  const { q, bar } = SearchRow({ placeholder: 'Search Zone name, code, or location...', narrow: true, children: <Btn primary icon={Plus}>Add Mapping</Btn> })
+  const [open, show, hide] = useOpen()
+  const { q, bar } = SearchRow({ placeholder: 'Search Zone name, code, or location...', narrow: true, children: <Btn primary icon={Plus} onClick={show}>Add Mapping</Btn> })
+  const devs = devices.map((d) => d.name), cams = ['Lobby Cam', 'Dock Cam']
   return (
     <Page title="Zone Hardware Mapping">
+      <AddModal open={open} onClose={hide} title="Add Hardware Assignment" size="max-w-2xl">
+        <FormGrid fields={[{ label: 'Select Zone to Map', type: 'select', placeholder: 'Choose a Zone...', options: ['Reception', 'Server Room', 'Warehouse', 'Cafeteria'] }]} />
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {[['Biometric Readers', 'text-emerald-600', 'bg-emerald-500', [hwSelect('Entry Device (IN)', 'Device', devs), hwSelect('Exit Device (OUT)', 'Device', devs)]],
+            ['CCTV Cameras', 'text-blue-600', 'bg-blue-500', [hwSelect('Entry Camera (IN)', 'Camera', cams), hwSelect('Exit Camera (OUT)', 'Camera', cams)]]].map(([t, tc, dot, fields]) => (
+            <div key={t} className="rounded-md bg-base-200/60 p-3">
+              <div className={`mb-3 flex items-center gap-2 text-xs font-semibold ${tc}`}><span className={`size-2 rounded-full ${dot}`} />{t}</div>
+              <FormGrid fields={fields} />
+            </div>
+          ))}
+        </div>
+      </AddModal>
       {bar}
       <DataTable rows={rowsOf(['zone', 'code', 'location', 'in', 'out'], [['Reception', 'Z-REC', 'Head Office', 'Main Gate', 'Main Gate'], ['Server Room', 'Z-SRV', 'Head Office', 'Server Room', 'Server Room'], ['Warehouse', 'Z-WH', 'Regional Office', 'Basement', 'Block B Exit']])}
         query={q} searchKeys={['zone', 'code', 'location']} selectable={false} columns={[
@@ -92,9 +134,13 @@ export function ZoneMapping() {
 }
 
 export function LeaveGroups() {
+  const [open, show, hide] = useOpen()
   const groups = [['Default', 'All Department.', 'All Designation.', 'All Category.', 'All Location.', true], ['Security Staff', 'Male Security, Female Security.', 'Security Officer.', 'Employee.', 'All Location.', false]]
   return (
-    <Page title="Leave Groups" actions={<Btn primary>Add New</Btn>}>
+    <Page title="Leave Groups" actions={<Btn primary onClick={show}>Add New</Btn>}>
+      <AddModal open={open} onClose={hide} title="Add Leave Group" size="max-w-xl" fields={[
+        { label: 'Name', hint: 'to customize the leave group, apply the filters.' }, ...applicable,
+      ]} />
       <div className="grid gap-3 md:grid-cols-2">
         {groups.map(([name, d, des, c, l, on]) => (
           <div key={name} className="rounded-lg bg-base-100 p-4 shadow-sm">
@@ -178,6 +224,7 @@ export function LeaveCalendar() {
 }
 
 export function PublicHolidays() {
+  const [open, show, hide] = useOpen()
   const { q, bar } = SearchRow({ placeholder: 'Search by Name, Short Name', children: <Btn primary icon={Filter}>Filter</Btn> })
   const rows = rowsOf(['name', 'short', 'date', 'recurs', 'locations', 'categories'], [
     ['Pongal', 'PGL', '2026-01-14 - 2026-01-15', '-', 'All', '-'], ['Republic Day', 'RD', '2026-01-26', 'Yearly', 'All', '-'],
@@ -186,7 +233,12 @@ export function PublicHolidays() {
     ['Christmas', 'XMAS', '2026-12-25', 'Yearly', 'All', '-'],
   ])
   return (
-    <Page title="Public Holidays" actions={<Btn primary>Add Public Holiday</Btn>}>
+    <Page title="Public Holidays" actions={<Btn primary onClick={show}>Add Public Holiday</Btn>}>
+      <AddModal open={open} onClose={hide} title="Add Public Holiday" cols={2} fields={[
+        { label: 'Name' }, { label: 'Short name' }, { label: 'From Date', type: 'date', span: true },
+        { label: 'To date', type: 'date', span: true }, { ...applicable[2], span: true }, { ...applicable[3], span: true },
+        { label: 'Recurs Yearly', type: 'check', span: true },
+      ]} />
       <div className="mb-1 text-[11px] font-semibold">Search</div>{bar}
       <DataTable rows={rows} query={q} searchKeys={['name', 'short']} selectable={false} columns={[
         { key: 'name', label: 'Name', sortable: true }, { key: 'short', label: 'Short Name', sortable: true }, { key: 'date', label: 'Date', sortable: true },
@@ -197,8 +249,10 @@ export function PublicHolidays() {
 }
 
 export function OptionalHolidays() {
+  const [open, show, hide] = useOpen()
   return (
-    <Page title="Optional Holidays" actions={<Btn primary>Add Optional Holiday</Btn>}>
+    <Page title="Optional Holidays" actions={<Btn primary onClick={show}>Add Optional Holiday</Btn>}>
+      <AddModal open={open} onClose={hide} title="Add Optional Holiday" fields={[{ label: 'Name' }, { label: 'Date', type: 'date' }]} />
       <DataTable selectable={false} rows={rowsOf(['name', 'date', 'limit', 'availed'], [['Raksha Bandhan', '2026-08-28', 1, 6], ['Good Friday', '2026-04-03', 1, 9], ['Bakrid', '2026-05-27', 1, 11]])} columns={[
         { key: 'name', label: 'Name' }, { key: 'date', label: 'Date' }, { key: 'limit', label: 'Max per Employee' }, { key: 'availed', label: 'Availed By' }, editDel,
       ]} />
@@ -214,9 +268,17 @@ export const shiftRows = rowsOf(['n', 'color', 'name', 'code', 'start', 'end', '
   [1, '#e11d63', '08:00 - 16:00 M1', 'MAD1', '08:00 AM', '04:00 PM', '08:00', '15 min'],
 ])
 
+const hhmm = (label, value = '00:00') => ({ label, type: 'time', value, hint: 'Format: HH:mm' })
 export function Shifts() {
+  const [open, show, hide] = useOpen()
   return (
-    <Page title="Shift" actions={<Btn primary>Add Shift</Btn>}>
+    <Page title="Shift" actions={<Btn primary onClick={show}>Add Shift</Btn>}>
+      <AddModal open={open} onClose={hide} title="Create Shift" cols={3} size="max-w-2xl" fields={[
+        { label: 'Name', span: true }, { label: 'Shift Code' }, { label: 'Color', type: 'color' }, { label: '', type: 'custom', render: () => null },
+        hhmm('Start Time', ''), hhmm('Duration', ''), { label: 'Grace Period', type: 'number', value: 0, hint: 'In minutes' },
+        hhmm('Full Day'), hhmm('Half Day'), hhmm('Breaks'), hhmm('Auto Shift Start'), hhmm('Auto Shift End'), hhmm('Auto Cutoff'),
+        { label: 'Calculate overtime based on full-day hours', type: 'check', span: true, hint: 'When enabled, overtime is calculated beyond the total full day hours.' },
+      ]} />
       <DataTable rows={shiftRows} selectable={false} columns={[
         { key: 'n', label: '#' }, { key: 'color', label: 'Color', render: (r) => <span className="block size-4 rounded-full" style={{ background: r.color }} /> },
         { key: 'name', label: 'Name', sortable: true }, { key: 'code', label: 'Shift Code', sortable: true }, { key: 'start', label: 'Start Time', sortable: true },

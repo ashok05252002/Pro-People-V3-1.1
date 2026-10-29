@@ -1,6 +1,7 @@
 // Route path -> page component. Routes not listed here render the Placeholder.
 import Dashboard from './Dashboard'
 import EmployeeList from './employee/EmployeeList'
+import AddEmployee from './employee/AddEmployee'
 import BulkUpload from './employee/BulkUpload'
 import BluePrint from './employee/BluePrint'
 import CustomizeInputs from './employee/CustomizeInputs'
@@ -126,6 +127,13 @@ export const pages = {
   '/devtools/prosync-logs': M.ProsyncLogs,
   '/devtools/laravel-log': M.LaravelLog,
   '/user-guide': M.UserGuide,
+}
+
+// Full-page add forms reached from a list page (not in the sidebar).
+export const extraPages = {
+  '/employee/employee/create': AddEmployee,
+  '/roles/create': C.AccessLevelCreate,
+  '/timetracker/roster/create': AT.ShiftPatternCreate,
 }
 
 // Every Settings tab (/systemsetting/<slug>) uses the same data-driven page.

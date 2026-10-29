@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Plus, Filter, Download, Upload, SlidersHorizontal } from 'lucide-react'
 import { Page, Btn, SearchBox, DataTable, Badge, Person, FilterDrawer } from '../../components/table'
 import { employees } from '../../data/people'
@@ -17,7 +18,7 @@ export default function EmployeeList() {
   return (
     <Page title="Employees" actions={<>
       <span className="rounded-md bg-base-100 px-4 py-3 text-[11px] shadow-sm">User Limit: {employees.length} / 50</span>
-      <Btn primary icon={Plus}>Add New</Btn>
+      <Link to="/employee/employee/create"><Btn primary icon={Plus}>Add New</Btn></Link>
     </>}>
       <div className="mb-1 text-[11px] font-semibold">Search</div>
       <div className="mb-2 flex flex-wrap gap-2">

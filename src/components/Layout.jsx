@@ -5,8 +5,9 @@ import {
 } from 'lucide-react'
 import { nav } from '../data/nav'
 
+// A list item also owns its "<path>/create" add page.
 const containsPath = (item, path) =>
-  item.path === path || (item.children || []).some((c) => containsPath(c, path))
+  item.path === path || path === item.path + '/create' || (item.children || []).some((c) => containsPath(c, path))
 
 function SubMenu({ items, depth }) {
   const { pathname } = useLocation()

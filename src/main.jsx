@@ -5,7 +5,7 @@ import './index.css'
 import Layout from './components/Layout'
 import Placeholder from './pages/Placeholder'
 import { flatRoutes } from './data/nav'
-import { pages } from './pages'
+import { pages, extraPages } from './pages'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -17,6 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             const Page = pages[r.path]
             return <Route key={r.path} path={r.path} element={Page ? <Page /> : <Placeholder route={r} />} />
           })}
+          {Object.entries(extraPages).map(([path, Page]) => <Route key={path} path={path} element={<Page />} />)}
         </Route>
       </Routes>
     </BrowserRouter>
