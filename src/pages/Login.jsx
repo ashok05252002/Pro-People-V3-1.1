@@ -1,7 +1,7 @@
 // Login screen, laid out like hrms.in4cloud.in/login. Any input logs in (static UI, no auth).
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Eye, EyeOff, CalendarCheck, Clock, Users, Fingerprint, CalendarRange, ShieldCheck, FileBarChart } from 'lucide-react'
+import { Mail, Eye, EyeOff, CalendarCheck, Clock, Users, Fingerprint, CalendarRange, ShieldCheck, FileBarChart, ImagePlus } from 'lucide-react'
 
 const modules = [
   [CalendarCheck, 'Attendance & Leave'], [Users, 'Employee Management'],
@@ -13,7 +13,16 @@ const modules = [
 export const DahuaLogo = ({ className = 'h-10 w-[104px]' }) => (
   <img src="/dahua-logo.jpg" alt="Dahua Technology" className={`object-cover object-[center_47%] ${className}`} />
 )
-const IproatLogo = ({ className = 'h-9' }) => <img src="/iproat-logo.png" alt="iProAT Solutions" className={`w-auto self-start ${className}`} />
+const IproatLogo = ({ className = 'h-9' }) => <img src="/iproat-logo.png" alt="iProAT Solutions" className={`w-auto ${className}`} />
+
+// Slot for the end customer's own logo (each Dahua customer puts theirs here).
+const CustomerLogo = () => (
+  <div className="mx-auto flex h-20 w-56 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-base-300 bg-base-100/70 text-base-content/45">
+    <ImagePlus size={22} strokeWidth={1.5} />
+    <span className="text-[13px] font-semibold">Customer Logo</span>
+    <span className="text-[10px]">Your company logo here</span>
+  </div>
+)
 
 export default function Login() {
   const go = useNavigate()
@@ -25,7 +34,7 @@ export default function Login() {
       {/* brand panel */}
       <section className="relative hidden flex-col overflow-hidden bg-[radial-gradient(120%_95%_at_0%_0%,#3c90cd_0%,#5a62b0_30%,#8a6cb0_52%,#7a2f5c_76%,#1f1a2e_100%)] px-14 py-14 text-white lg:flex">
         <div className="pointer-events-none absolute -right-32 top-1/3 size-[28rem] rounded-full bg-brand-red/25 blur-3xl" />
-        <div className="w-fit rounded-xl bg-white px-3 py-1.5 shadow-lg"><DahuaLogo /></div>
+        <div className="w-fit rounded-2xl bg-white px-5 py-2.5 shadow-lg"><DahuaLogo className="h-[72px] w-[188px]" /></div>
 
         <div className="mt-auto">
           <h1 className="text-5xl font-black tracking-tight">ONE LOGIN</h1>
@@ -47,8 +56,8 @@ export default function Login() {
 
         <div className="mt-auto flex items-end justify-between pt-12">
           <div>
-            <p className="text-2xl font-black">360°</p>
-            <p className="text-[10px] font-bold tracking-[0.2em] text-white/50">COMPREHENSIVE COVERAGE</p>
+            <p className="mb-1.5 text-[10px] font-bold tracking-[0.2em] text-white/60">POWERED BY</p>
+            <div className="w-fit rounded-lg bg-white px-3 py-1.5 shadow-md"><IproatLogo className="h-9" /></div>
           </div>
           <a href="https://www.iproat.com" target="_blank" rel="noreferrer"
             className="rounded-full border border-white/25 px-3.5 py-1 text-xs font-semibold hover:bg-white/10">www.iproat.com</a>
@@ -57,14 +66,12 @@ export default function Login() {
 
       {/* sign-in panel */}
       <section className="relative flex flex-col bg-gradient-to-br from-base-100 via-base-100 to-violet-50 px-8 py-6">
-        <IproatLogo />
         <form onSubmit={login} className="m-auto flex w-full max-w-sm flex-col gap-4 py-10">
-          <div className="text-center">
+          <CustomerLogo />
+          <div className="mt-2 text-center">
             <h2 className="text-2xl font-light italic">Hello, Welcome Back</h2>
             <p className="mt-1 text-[10px] font-bold tracking-[0.2em] text-base-content/50">SECURE TERMINAL ACCESS</p>
           </div>
-          <div className="mb-1 flex justify-center lg:hidden"><DahuaLogo /></div>
-          <div className="flex justify-center"><IproatLogo className="h-12" /></div>
 
           <label className="input h-11 w-full gap-2 focus-within:border-primary focus-within:outline-primary">
             <Mail size={15} className="opacity-50" />
