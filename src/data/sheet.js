@@ -82,3 +82,13 @@ export function downloadCsv(name, rows) {
   a.click()
   URL.revokeObjectURL(a.href)
 }
+
+// Excel day fraction (0.375), HH:MM or h:mm AM/PM -> minutes after midnight (null if unreadable).
+export function toMinutes(v) {
+  if (/^0?\.\d+$/.test(v)) return Math.round(+v * 1440)
+  const m = v.trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?$/)
+  if (!m) return null
+  let h = +m[1]
+  if (m[3]) h = (h % 12) + (/p/i.test(m[3]) ? 12 : 0)
+  return h < 24 && +m[2] < 60 ? h * 60 + +m[2] : null
+}

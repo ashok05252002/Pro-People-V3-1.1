@@ -33,6 +33,7 @@ export const nav = [
       {
         label: 'Leave', children: [
           { label: 'Apply Leave', path: '/leave/apply' },
+          { label: 'Apply Permission', path: '/leave/permission' },
           { label: 'Leave Types', path: '/timetracker/leave_groups' },
           { label: 'Leave Credits', path: '/timetracker/leave_credits' },
           { label: 'Permission Settings', path: '/timetracker/permission_settings' },

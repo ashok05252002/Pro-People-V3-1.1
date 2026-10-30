@@ -5,7 +5,7 @@ import {
 } from 'lucide-react'
 import { nav } from '../data/nav'
 import { Toaster } from './forms'
-import { DahuaLogo } from '../pages/Login'
+import { CustomerLogo } from '../pages/Login'
 
 // A list item also owns the pages under it ("<path>/create", "<path>/<id>").
 const containsPath = (item, path) =>
@@ -98,7 +98,7 @@ function Header({ onMenu, dark, setDark }) {
   return (
     <header className="fixed inset-x-0 top-0 z-30 flex h-[57px] items-center gap-3 border-b border-base-300 bg-base-100 px-5">
       <button onClick={onMenu} className="btn btn-ghost btn-sm btn-square"><Menu size={18} strokeWidth={1.5} /></button>
-      <Link to="/dashboard" className="rounded-md bg-white px-1"><DahuaLogo className="h-9 w-[94px]" /></Link>
+      <Link to="/dashboard"><CustomerLogo small /></Link>
       <div className="flex-1" />
       <label className="flex h-9 w-36 items-center gap-2 rounded-lg border border-base-300 bg-base-200/60 px-2.5 text-[13px] text-base-content/50">
         <Search size={14} />

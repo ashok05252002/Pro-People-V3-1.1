@@ -1,13 +1,13 @@
 // Login screen, laid out like hrms.in4cloud.in/login. Any input logs in (static UI, no auth).
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Eye, EyeOff, CalendarCheck, Clock, Users, Fingerprint, CalendarRange, ShieldCheck, FileBarChart, ImagePlus } from 'lucide-react'
+import { Mail, Eye, EyeOff, CalendarCheck, Clock, Users, Fingerprint, CalendarRange, Timer, PartyPopper, FileBarChart, ImagePlus, ArrowUpRight } from 'lucide-react'
 
 const modules = [
-  [CalendarCheck, 'Attendance & Leave'], [Users, 'Employee Management'],
+  [CalendarCheck, 'Attendance Tracking'], [Users, 'Employee Management'],
   [Clock, 'Shifts & Roster'], [Fingerprint, 'Biometric Devices'],
-  [CalendarRange, 'Leave Application'], [ShieldCheck, 'Permission Rules'],
-  [FileBarChart, 'Time Tracker Reports', true],
+  [CalendarRange, 'Leave Management'], [Timer, 'Permission Requests'],
+  [PartyPopper, 'Holiday Calendar'], [FileBarChart, 'Reports & Analytics'],
 ]
 
 export const DahuaLogo = ({ className = 'h-10 w-[104px]' }) => (
@@ -15,8 +15,12 @@ export const DahuaLogo = ({ className = 'h-10 w-[104px]' }) => (
 )
 const IproatLogo = ({ className = 'h-9' }) => <img src="/iproat-logo.png" alt="iProAT Solutions" className={`w-auto ${className}`} />
 
-// Slot for the end customer's own logo (each Dahua customer puts theirs here).
-const CustomerLogo = () => (
+// Slot for the end customer's own logo (each Dahua customer puts theirs here); small = app header size.
+export const CustomerLogo = ({ small }) => small ? (
+  <div className="flex h-9 items-center gap-1.5 rounded-md border-2 border-dashed border-base-300 px-3 text-[12px] font-semibold text-base-content/45">
+    <ImagePlus size={15} strokeWidth={1.75} />Customer Logo
+  </div>
+) : (
   <div className="mx-auto flex h-20 w-56 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-base-300 bg-base-100/70 text-base-content/45">
     <ImagePlus size={22} strokeWidth={1.5} />
     <span className="text-[13px] font-semibold">Customer Logo</span>
@@ -32,35 +36,38 @@ export default function Login() {
   return (
     <div data-theme="light" className="iproat-theme grid min-h-screen bg-base-100 lg:grid-cols-[54%_1fr]">
       {/* brand panel */}
-      <section className="relative hidden flex-col overflow-hidden bg-[radial-gradient(120%_95%_at_0%_0%,#3c90cd_0%,#5a62b0_30%,#8a6cb0_52%,#7a2f5c_76%,#1f1a2e_100%)] px-14 py-14 text-white lg:flex">
+      <section className="relative hidden overflow-hidden bg-[radial-gradient(120%_95%_at_0%_0%,#3c90cd_0%,#5a62b0_30%,#8a6cb0_52%,#7a2f5c_76%,#1f1a2e_100%)] px-16 py-12 text-white lg:flex">
         <div className="pointer-events-none absolute -right-32 top-1/3 size-[28rem] rounded-full bg-brand-red/25 blur-3xl" />
-        <div className="w-fit rounded-2xl bg-white px-5 py-2.5 shadow-lg"><DahuaLogo className="h-[72px] w-[188px]" /></div>
+        <div className="relative mx-auto flex w-full max-w-[600px] flex-col">
+          <div className="w-fit rounded-2xl bg-white px-5 py-2.5 shadow-lg"><DahuaLogo className="h-[72px] w-[188px]" /></div>
 
-        <div className="mt-auto">
-          <h1 className="text-5xl font-black tracking-tight">ONE LOGIN</h1>
-          <p className="mt-2 text-xl font-bold text-white/85">End-to-End Workforce Automation</p>
-          <p className="mt-2 max-w-md text-[15px] leading-relaxed text-white/70">
-            A complete human resource suite: track people, attendance, leave, shifts and permissions.
-            Secure biometric integration with seamless reporting.
-          </p>
+          <div className="my-auto py-12">
+            <p className="text-[11px] font-bold tracking-[0.25em] text-white/60">WORKFORCE MANAGEMENT SUITE</p>
+            <h1 className="mt-3 text-5xl leading-none font-black tracking-tight">ONE LOGIN</h1>
+            <p className="mt-3 text-xl font-bold text-white/90">End-to-End Workforce Automation</p>
+            <p className="mt-3 text-[15px] leading-relaxed text-white/70">
+              A complete human resource suite to track people, attendance, leave, shifts and permissions,
+              with secure biometric integration and seamless reporting.
+            </p>
 
-          <p className="mt-9 mb-3 text-[11px] font-bold tracking-[0.2em] text-white/50">STRATEGIC MODULES</p>
-          <div className="grid max-w-3xl grid-cols-2 gap-2.5">
-            {modules.map(([Icon, label, wide]) => (
-              <div key={label} className={`flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-2.5 py-2.5 text-[13px] font-semibold backdrop-blur-sm ${wide ? 'col-span-2' : ''}`}>
-                <span className="grid size-7 place-items-center rounded-md border border-white/15 bg-white/10"><Icon size={14} /></span>{label}
-              </div>
-            ))}
+            <p className="mt-10 mb-3 text-[11px] font-bold tracking-[0.25em] text-white/60">STRATEGIC MODULES</p>
+            <div className="grid grid-cols-2 gap-3">
+              {modules.map(([Icon, label]) => (
+                <div key={label} className="flex h-12 items-center gap-3 rounded-lg border border-white/15 bg-white/[0.07] px-3 text-[13px] font-semibold backdrop-blur-sm">
+                  <span className="grid size-7 shrink-0 place-items-center rounded-md bg-white/15"><Icon size={14} /></span>{label}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="mt-auto flex items-end justify-between pt-12">
-          <div>
-            <p className="mb-1.5 text-[10px] font-bold tracking-[0.2em] text-white/60">POWERED BY</p>
-            <div className="w-fit rounded-lg bg-white px-3 py-1.5 shadow-md"><IproatLogo className="h-9" /></div>
+          <div className="flex items-center justify-between border-t border-white/15 pt-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] font-bold tracking-[0.25em] text-white/60">POWERED BY</span>
+              <span className="rounded-lg bg-white px-3 py-1.5 shadow-md"><IproatLogo className="h-8" /></span>
+            </div>
+            <a href="https://www.iproat.com" target="_blank" rel="noreferrer"
+              className="flex items-center gap-1 rounded-full border border-white/25 px-3.5 py-1.5 text-xs font-semibold hover:bg-white/10">www.iproat.com<ArrowUpRight size={13} /></a>
           </div>
-          <a href="https://www.iproat.com" target="_blank" rel="noreferrer"
-            className="rounded-full border border-white/25 px-3.5 py-1 text-xs font-semibold hover:bg-white/10">www.iproat.com</a>
         </div>
       </section>
 
