@@ -1,8 +1,7 @@
 // Upgrade page for a locked (premium) module or for the advanced features of an included module.
 import { useParams, Navigate } from 'react-router-dom'
-import { Crown, Star, Lock, CircleCheck, Send, UserCog, Eye, Wifi, WifiOff, Fingerprint, Bell, Briefcase, House } from 'lucide-react'
+import { Crown, Star, Lock, CircleCheck, UserCog, Eye, Wifi, WifiOff, Fingerprint, Bell, Briefcase, House } from 'lucide-react'
 import { Page } from '../components/table'
-import { toast } from '../components/forms'
 import { premiumOf, premiumGroups } from '../data/premium'
 import { premiumSamples } from '../data/premiumSamples'
 import { Avatar } from '../components/ui'
@@ -148,16 +147,9 @@ export default function Premium() {
             <h2 className="mt-1.5 text-lg font-bold">{m.label} is not included in your current plan</h2>
             <p className="mt-0.5 text-[13px] text-base-content/70">{m.desc}</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button onClick={() => toast('Your administrator has been notified')}
-              className="btn h-10 gap-2 rounded-md border-base-300 bg-base-100 px-4 text-[13px] font-semibold shadow-sm">
-              <UserCog size={15} />Contact Administrator
-            </button>
-            <button onClick={() => toast(`Upgrade request for ${m.label} sent to your administrator`)}
-              className="btn h-10 gap-2 rounded-md border-amber-500 bg-amber-500 px-4 text-[13px] font-semibold text-white shadow-sm shadow-amber-500/30 hover:border-amber-600 hover:bg-amber-600">
-              <Send size={15} />Request Upgrade
-            </button>
-          </div>
+          <span className="flex h-10 items-center gap-2 rounded-md bg-amber-500 px-4 text-[13px] font-semibold text-white shadow-sm shadow-amber-500/30">
+            <UserCog size={15} />Contact Administrator
+          </span>
         </div>
 
         <div className="px-6 py-5">
@@ -169,7 +161,6 @@ export default function Premium() {
               </li>
             ))}
           </ul>
-          <p className="mt-5 text-[12px] text-base-content/50">Contact your administrator to enable this module. Your data stays as it is, and the module unlocks in the same login.</p>
         </div>
         {!previewFirst && <Preview k={m.key} />}
       </div>
