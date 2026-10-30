@@ -8,6 +8,7 @@ export const nav = [
   {
     label: 'Employee', icon: Contact, children: [
       { label: 'Employee List', path: '/employee/employee' },
+      { label: 'More Features', path: '/premium/employee', premium: true },
     ],
   },
   {
@@ -16,6 +17,7 @@ export const nav = [
       { label: 'Designations', path: '/organization/designation' },
       { label: 'Locations', path: '/organization/location' },
       { label: 'Categories', path: '/organization/categories' },
+      { label: 'More Features', path: '/premium/company', premium: true },
     ],
   },
   {
@@ -53,13 +55,14 @@ export const nav = [
       },
       { label: 'Reports', path: '/timetracker/reports' },
       { label: 'Time Adjustment', path: '/timetracker/manual_time_adjustment' },
+      { label: 'More Features', path: '/premium/timetracker', premium: true },
     ],
   },
 ]
 
-// Flat list of every leaf route with its breadcrumb trail.
+// Flat list of every leaf route with its breadcrumb trail (premium items all go to /premium/:key).
 export function flatRoutes(items = nav, trail = []) {
-  return items.flatMap((item) =>
+  return items.filter((item) => !item.premium).flatMap((item) =>
     item.children
       ? flatRoutes(item.children, [...trail, item.label])
       : [{ path: item.path, label: item.label, trail: [...trail, item.label] }],

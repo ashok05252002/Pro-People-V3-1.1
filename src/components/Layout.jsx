@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom'
 import {
-  Menu, Search, VolumeX, Moon, Sun, Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDot, LogOut,
+  Menu, Search, VolumeX, Moon, Sun, Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDot, LogOut, Star,
 } from 'lucide-react'
 import { nav } from '../data/nav'
+import { premiumModules } from '../data/premium'
 import { Toaster } from './forms'
 import { CustomerLogo } from '../pages/Login'
+
+const GoldStar = ({ size = 13 }) => <Star size={size} className="shrink-0 fill-amber-400 text-amber-500" />
 
 // A list item also owns the pages under it ("<path>/create", "<path>/<id>").
 const containsPath = (item, path) =>
@@ -33,11 +36,11 @@ function SubMenu({ items, depth }) {
           <li key={item.path + item.label}>
             <NavLink
               to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm ${isActive ? 'bg-primary/10 font-semibold text-primary' : 'text-base-content/70 hover:bg-base-200'}`
-              }
+              className={({ isActive }) => item.premium
+                ? `flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm ${isActive ? 'bg-amber-100 font-semibold text-amber-700' : 'text-amber-700/90 hover:bg-amber-50'}`
+                : `flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm ${isActive ? 'bg-primary/10 font-semibold text-primary' : 'text-base-content/70 hover:bg-base-200'}`}
             >
-              <CircleDot size={13} className="opacity-60" />
+              {item.premium ? <GoldStar /> : <CircleDot size={13} className="opacity-60" />}
               {item.label}
             </NavLink>
           </li>
@@ -83,6 +86,22 @@ function Sidebar({ collapsed, setCollapsed }) {
             </li>
           )
         })}
+
+        {/* locked modules, outside the customer's plan */}
+        <li className={`mt-3 border-t border-base-300 pt-3 ${collapsed ? 'flex justify-center' : 'flex items-center gap-1.5 px-2.5 pb-1'}`}>
+          <GoldStar size={collapsed ? 16 : 13} />
+          {!collapsed && <span className="text-[11px] font-bold tracking-[0.18em] text-amber-600">PREMIUM</span>}
+        </li>
+        {premiumModules.map((m) => (
+          <li key={m.key}>
+            <NavLink to={`/premium/${m.key}`} title={`${m.label} (Premium)`} className={({ isActive }) =>
+              `relative flex w-full items-center gap-3 rounded-lg px-2.5 py-3 text-sm transition-all ${isActive ? 'bg-amber-100 font-bold text-amber-800' : 'text-base-content/60 hover:bg-amber-50 hover:text-amber-800'}`}>
+              <m.icon size={20} strokeWidth={1.5} className="shrink-0" />
+              {collapsed ? <span className="absolute top-1.5 right-2"><GoldStar size={11} /></span>
+                : <><span className="flex-1 truncate">{m.label}</span><GoldStar /></>}
+            </NavLink>
+          </li>
+        ))}
       </ul>
       <button
         onClick={() => setCollapsed(!collapsed)}
