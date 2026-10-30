@@ -23,8 +23,8 @@ export default function Login() {
   return (
     <div data-theme="light" className="grid min-h-screen bg-base-100 lg:grid-cols-[54%_1fr]">
       {/* brand panel */}
-      <section className="relative hidden flex-col overflow-hidden bg-[radial-gradient(120%_90%_at_0%_0%,#e2231a_0%,#8e0f0a_38%,#2a0605_70%,#0d0d0d_100%)] px-14 py-14 text-white lg:flex">
-        <div className="pointer-events-none absolute -right-32 top-1/3 size-[28rem] rounded-full bg-white/5 blur-3xl" />
+      <section className="relative hidden flex-col overflow-hidden bg-[radial-gradient(120%_95%_at_0%_0%,#3c90cd_0%,#5a62b0_30%,#8a6cb0_52%,#7a2f5c_76%,#1f1a2e_100%)] px-14 py-14 text-white lg:flex">
+        <div className="pointer-events-none absolute -right-32 top-1/3 size-[28rem] rounded-full bg-brand-red/25 blur-3xl" />
         <div className="w-fit rounded-xl bg-white px-3 py-1.5 shadow-lg"><DahuaLogo /></div>
 
         <div className="mt-auto">
@@ -56,7 +56,7 @@ export default function Login() {
       </section>
 
       {/* sign-in panel */}
-      <section className="relative flex flex-col bg-gradient-to-br from-base-100 via-base-100 to-red-50 px-8 py-6">
+      <section className="relative flex flex-col bg-gradient-to-br from-base-100 via-base-100 to-violet-50 px-8 py-6">
         <IproatLogo />
         <form onSubmit={login} className="m-auto flex w-full max-w-sm flex-col gap-4 py-10">
           <div className="text-center">
@@ -78,7 +78,7 @@ export default function Login() {
             <label className="flex items-center gap-2 font-medium"><input type="checkbox" className="checkbox checkbox-sm checkbox-primary" />Remember me</label>
             <a href="#" onClick={(e) => e.preventDefault()} className="text-xs font-medium text-primary hover:underline">Forgot password?</a>
           </div>
-          <button type="submit" className="btn btn-primary h-11 w-full text-sm shadow-md shadow-primary/30">Log in</button>
+          <button type="submit" className="btn btn-primary h-11 w-full text-sm shadow-md shadow-brand-violet/30">Log in</button>
         </form>
         <p className="text-center text-[11px] text-base-content/40">© 2026 iProAT Solutions</p>
       </section>
