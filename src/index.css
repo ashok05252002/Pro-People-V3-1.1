@@ -3,6 +3,23 @@
   themes: light --default, dark;
 }
 
+/* Dahua brand: red + black on the daisyUI light/dark themes. */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #e2231a;
+  --color-primary-content: #ffffff;
+  --color-secondary: #1f1f1f;
+  --color-secondary-content: #ffffff;
+  --color-neutral: #1a1a1a;
+  --color-neutral-content: #ffffff;
+}
+@plugin "daisyui/theme" {
+  name: "dark";
+  --color-primary: #ef3b32;
+  --color-primary-content: #ffffff;
+}
+
 body {
   @apply bg-base-200 text-base-content text-sm antialiased;
 }

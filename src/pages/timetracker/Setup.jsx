@@ -192,10 +192,6 @@ const permissionRules = [
   { label: 'Apply Before (days)', type: 'number', value: 30, hint: 'Minimum days in advance a permission request must be submitted.' },
   { label: 'Frequency', type: 'select', placeholder: 'Select Frequency', options: ['Daily', 'Weekly', 'Monthly', 'Yearly'], value: 'Monthly', hint: 'How often the permission count resets (daily / weekly / monthly). Optional.' },
 ]
-const permissionPolicy = [
-  { label: 'Approval Structure', type: 'select', placeholder: 'Select Approval Structure', options: ['Parallel Approval', 'Hierarchy Approval'], value: 'Hierarchy Approval' },
-  { label: 'Number of Approval Levels', type: 'select', placeholder: 'Select Number of Approval Levels', options: ['Single Approval', 'Double Approval', 'Triple Approval', 'Quadruple Approval', 'Quintuple Approval'], value: 'Double Approval' },
-]
 
 export function PermissionSettings() {
   const save = (e) => { e.preventDefault(); toast('Permission settings saved') }
@@ -203,12 +199,10 @@ export function PermissionSettings() {
     <form onSubmit={save}>
       <Page title="Permission Settings" actions={<Btn primary type="submit" icon={Check}>Save Settings</Btn>}>
         <div className="space-y-4 rounded-box bg-base-100 p-3">
-          {[['Permission Rules', permissionRules], ['Permissions Policy', permissionPolicy]].map(([title, fields]) => (
-            <section key={title} className="rounded-box bg-base-200/50 p-4">
-              <h3 className="mb-4 text-lg font-bold">{title}</h3>
-              <FormGrid fields={fields} cols={2} />
-            </section>
-          ))}
+          <section className="rounded-box bg-base-200/50 p-4">
+            <h3 className="mb-4 text-lg font-bold">Permission Rules</h3>
+            <FormGrid fields={permissionRules} cols={2} />
+          </section>
         </div>
       </Page>
     </form>

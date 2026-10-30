@@ -7,6 +7,7 @@ import * as C from './Company'
 import * as TA from './timetracker/Approvals'
 import * as TS from './timetracker/Setup'
 import * as AT from './timetracker/Attendance'
+import * as LA from './leave/LeaveApplication'
 
 export const pages = {
   '/dashboard': Dashboard,
@@ -15,6 +16,8 @@ export const pages = {
   '/organization/designation': C.Designations,
   '/organization/location': C.Locations,
   '/organization/categories': C.Categories,
+  '/leave/apply': LA.ApplyLeave,
+  '/leave/bulk': LA.BulkApply,
   '/timetracker/approval': TA.LeaveRequests,
   '/timetracker/devices': TS.BiometricDevices,
   '/timetracker/leave_groups': TS.LeaveGroups,

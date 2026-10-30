@@ -1,6 +1,6 @@
 // Sidebar menu, captured from the test staging app on 2026-10-29.
 import {
-  Rocket, Contact, Building2, Clock,
+  Rocket, Contact, Building2, Clock, CalendarPlus,
 } from 'lucide-react'
 
 export const nav = [
@@ -16,6 +16,12 @@ export const nav = [
       { label: 'Designations', path: '/organization/designation' },
       { label: 'Locations', path: '/organization/location' },
       { label: 'Categories', path: '/organization/categories' },
+    ],
+  },
+  {
+    label: 'Leave Application', icon: CalendarPlus, children: [
+      { label: 'Apply Leave', path: '/leave/apply' },
+      { label: 'Bulk Leave Apply', path: '/leave/bulk' },
     ],
   },
   {
