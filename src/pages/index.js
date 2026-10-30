@@ -17,7 +17,6 @@ export const pages = {
   '/organization/location': C.Locations,
   '/organization/categories': C.Categories,
   '/leave/apply': LA.ApplyLeave,
-  '/leave/bulk': LA.BulkApply,
   '/timetracker/approval': TA.LeaveRequests,
   '/timetracker/devices': TS.BiometricDevices,
   '/timetracker/leave_groups': TS.LeaveGroups,
