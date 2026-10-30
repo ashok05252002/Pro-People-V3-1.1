@@ -1,15 +1,10 @@
 // Sidebar menu, captured from the test staging app on 2026-10-29.
 import {
-  Rocket, CircleUserRound, Contact, Building2, Clock,
+  Rocket, Contact, Building2, Clock,
 } from 'lucide-react'
 
 export const nav = [
   { label: 'Dashboard', icon: Rocket, path: '/dashboard' },
-  {
-    label: 'My Space', icon: CircleUserRound, children: [
-      { label: 'My Profile', path: '/me' },
-    ],
-  },
   {
     label: 'Employee', icon: Contact, children: [
       { label: 'Employee List', path: '/employee/employee' },

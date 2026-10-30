@@ -10,7 +10,6 @@ import * as AT from './timetracker/Attendance'
 
 export const pages = {
   '/dashboard': Dashboard,
-  '/me': Profile,
   '/employee/employee': EmployeeList,
   '/organization/department': C.Departments,
   '/organization/designation': C.Designations,

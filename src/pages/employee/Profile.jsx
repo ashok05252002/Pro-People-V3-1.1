@@ -1,4 +1,4 @@
-// Employee profile (also "My Profile" under My Space): header card + tabs, as on the test staging app.
+// Employee profile: header card + tabs, as on the test staging app.
 // Section pencils open an edit form that saves back to the employee record.
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
