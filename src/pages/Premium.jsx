@@ -1,5 +1,5 @@
 // Upgrade page for a locked (premium) module or for the advanced features of an included module.
-import { useParams, Navigate } from 'react-router-dom'
+import { useParams, Navigate, Link } from 'react-router-dom'
 import { Crown, Star, Lock, CircleCheck, Eye, Wifi, WifiOff, Fingerprint, Bell, Briefcase, House } from 'lucide-react'
 import { Page } from '../components/table'
 import { premiumOf, premiumGroups } from '../data/premium'
@@ -147,7 +147,7 @@ export default function Premium() {
             <h2 className="mt-1.5 text-lg font-bold">{m.label} is not included in your current plan</h2>
             <p className="mt-0.5 text-[13px] text-base-content/70">{m.desc}</p>
           </div>
-          <p className="text-[13px] font-medium text-amber-800">Contact Administrator</p>
+          <Link to="/contact" className="text-[13px] font-medium text-amber-800 underline-offset-2 hover:underline">Contact Administrator</Link>
         </div>
 
         <div className="px-6 py-5">
