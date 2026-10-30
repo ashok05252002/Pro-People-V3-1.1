@@ -1,6 +1,6 @@
 // Upgrade page for a locked (premium) module or for the advanced features of an included module.
 import { useParams, Navigate } from 'react-router-dom'
-import { Crown, Star, Lock, CircleCheck, UserCog, Eye, Wifi, WifiOff, Fingerprint, Bell, Briefcase, House } from 'lucide-react'
+import { Crown, Star, Lock, CircleCheck, Eye, Wifi, WifiOff, Fingerprint, Bell, Briefcase, House } from 'lucide-react'
 import { Page } from '../components/table'
 import { premiumOf, premiumGroups } from '../data/premium'
 import { premiumSamples } from '../data/premiumSamples'
@@ -147,9 +147,7 @@ export default function Premium() {
             <h2 className="mt-1.5 text-lg font-bold">{m.label} is not included in your current plan</h2>
             <p className="mt-0.5 text-[13px] text-base-content/70">{m.desc}</p>
           </div>
-          <span className="flex h-10 items-center gap-2 rounded-md bg-amber-500 px-4 text-[13px] font-semibold text-white shadow-sm shadow-amber-500/30">
-            <UserCog size={15} />Contact Administrator
-          </span>
+          <p className="text-[13px] font-medium text-amber-800">Contact Administrator</p>
         </div>
 
         <div className="px-6 py-5">
