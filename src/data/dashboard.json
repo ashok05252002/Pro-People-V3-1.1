@@ -91,20 +91,6 @@
       "color": "accent"
     }
   ],
-  "notifications": [
-    {
-      "title": "Leave request from Priya Raman",
-      "time": "10 min ago"
-    },
-    {
-      "title": "Punch request pending approval",
-      "time": "1 hour ago"
-    },
-    {
-      "title": "Payroll for September generated",
-      "time": "Yesterday"
-    }
-  ],
   "timeLogs": [
     {
       "name": "Arun Kumar",

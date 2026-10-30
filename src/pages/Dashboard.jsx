@@ -1,9 +1,9 @@
 // Dashboard, laid out as on the test staging app: clock + weather card, 10 stat tiles,
-// reserved slots around Notifications, and the Time Log Report.
+// and the Time Log Report.
 import { useEffect, useState } from 'react'
 import {
   MapPin, Sun, Users, UserMinus, CircleCheck, Clock, CircleX, CalendarDays, CalendarRange, Sparkles,
-  BriefcaseBusiness, House, Bell, BellOff, Lock, Plus, CalendarClock,
+  BriefcaseBusiness, House, Plus, CalendarClock,
 } from 'lucide-react'
 import { Card, Avatar } from '../components/ui'
 import { useRows } from '../data/store'
@@ -72,12 +72,12 @@ function StatCard({ s }) {
   )
 }
 
-function Slot({ empty }) {
+function EmptySlot() {
   return (
-    <div className={`grid min-h-64 place-items-center rounded-lg border border-base-300 ${empty ? 'border-dashed bg-base-100/60' : 'bg-base-100'} shadow-sm`}>
+    <div className="grid min-h-64 place-items-center rounded-lg border border-dashed border-base-300 bg-base-100/60 shadow-sm">
       <div className="flex flex-col items-center gap-2 text-[9px] font-semibold tracking-widest text-base-content/40 uppercase">
-        <span className="grid size-12 place-items-center rounded-lg border border-base-300 bg-base-200/60">{empty ? <Plus size={18} /> : <Lock size={18} />}</span>
-        {empty ? 'Empty Slot' : 'Reserved Slot'}
+        <span className="grid size-12 place-items-center rounded-lg border border-base-300 bg-base-200/60"><Plus size={18} /></span>
+        Empty Slot
       </div>
     </div>
   )
@@ -109,18 +109,6 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-3.5 lg:grid-cols-3">
-        <Slot />
-        <Card icon={Bell} title="Notifications" bodyClass="p-0">
-          {d.notifications.length ? (
-            <ul className="divide-y divide-base-300">
-              {d.notifications.map((n) => <li key={n.title} className="px-4 py-3"><div className="text-[13px]">{n.title}</div><div className="text-[11px] text-base-content/50">{n.time}</div></li>)}
-            </ul>
-          ) : <div className="flex flex-col items-center gap-2 py-12 text-xs text-base-content/50"><BellOff size={22} />All caught up!</div>}
-        </Card>
-        <Slot />
-      </div>
-
-      <div className="grid gap-3.5 lg:grid-cols-3">
         <Card icon={CalendarClock} title="Time Log Report" subtitle="Recent attendance activity" className="lg:col-span-2" bodyClass="p-0"
           action={<span className="rounded-md border border-base-300 px-2 py-1 text-[10px] font-bold">LATEST</span>}>
           <table className="table table-sm text-xs">
@@ -136,7 +124,7 @@ export default function Dashboard() {
           </table>
           {!d.timeLogs.length && <div className="py-10 text-center text-xs text-base-content/50">No time logs found yet.</div>}
         </Card>
-        <Slot empty />
+        <EmptySlot />
       </div>
     </div>
   )
