@@ -73,22 +73,6 @@
       "pct": 0,
       "sub": "Public holidays",
       "color": "secondary"
-    },
-    {
-      "key": "onduty",
-      "label": "On-Duty",
-      "value": 1,
-      "pct": 2,
-      "sub": "Working on assignment",
-      "color": "info"
-    },
-    {
-      "key": "wfh",
-      "label": "WFH",
-      "value": 2,
-      "pct": 5,
-      "sub": "Work from home",
-      "color": "accent"
     }
   ],
   "timeLogs": [

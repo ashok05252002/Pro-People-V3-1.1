@@ -1,9 +1,9 @@
-// Dashboard, laid out as on the test staging app: clock + weather card, 10 stat tiles,
+// Dashboard, laid out as on the test staging app: clock + weather card, 8 stat tiles,
 // and the Time Log Report.
 import { useEffect, useState } from 'react'
 import {
   MapPin, Sun, Users, UserMinus, CircleCheck, Clock, CircleX, CalendarDays, CalendarRange, Sparkles,
-  BriefcaseBusiness, House, Plus, CalendarClock,
+  Plus, CalendarClock,
 } from 'lucide-react'
 import { Card, Avatar } from '../components/ui'
 import { useRows } from '../data/store'
@@ -19,8 +19,6 @@ const statStyle = {
   leave: { icon: CalendarDays, tint: 'bg-amber-50 text-amber-500', bar: 'bg-amber-500' },
   weekoff: { icon: CalendarRange, tint: 'bg-indigo-50 text-indigo-500', bar: 'bg-indigo-500' },
   holiday: { icon: Sparkles, tint: 'bg-fuchsia-50 text-fuchsia-500', bar: 'bg-fuchsia-500' },
-  onduty: { icon: BriefcaseBusiness, tint: 'bg-cyan-50 text-cyan-500', bar: 'bg-cyan-500' },
-  wfh: { icon: House, tint: 'bg-teal-50 text-teal-500', bar: 'bg-teal-500' },
 }
 
 function ClockCard() {
@@ -105,7 +103,7 @@ export default function Dashboard() {
 
       <div className="grid gap-3.5 lg:grid-cols-[1fr_2.05fr]">
         <ClockCard />
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">{stats.map((s) => <StatCard key={s.key} s={s} />)}</div>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">{stats.map((s) => <StatCard key={s.key} s={s} />)}</div>
       </div>
 
       <div className="grid gap-3.5 lg:grid-cols-3">
