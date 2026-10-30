@@ -108,11 +108,11 @@ function DashboardPreview() {
 }
 
 // Read-only mock of the module with sample data, fading into a lock badge.
-function Preview({ k }) {
+function Preview({ k, top }) {
   const d = premiumSamples[k]
   if (k !== 'dashboard' && !d) return null
   return (
-    <div className="border-t border-base-300 px-6 py-5">
+    <div className={`px-6 py-5 ${top ? '' : 'border-t border-base-300'}`}>
       <h3 className="mb-3 flex items-center gap-2 text-[13px] font-bold tracking-wide text-base-content/60 uppercase">
         <Eye size={14} />Preview<span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] tracking-wider text-amber-700">SAMPLE DATA</span>
       </h3>
@@ -131,8 +131,11 @@ function Preview({ k }) {
 export default function Premium() {
   const m = premiumOf(useParams().key)
   if (!m) return <Navigate to="/dashboard" replace />
+  // Full Dashboard leads with the preview; other modules show it below the features.
+  const previewFirst = m.key === 'dashboard'
   return (
     <Page title={m.label} subtitle={m.group ? `Premium module \u00b7 ${premiumGroups[m.group].label}` : 'Premium module'}>
+      {previewFirst && <div className="mb-4 overflow-hidden rounded-box bg-base-100 shadow-sm"><Preview k={m.key} top /></div>}
       <div className="overflow-hidden rounded-box bg-base-100 shadow-sm">
         <div className="flex flex-wrap items-center gap-5 bg-gradient-to-r from-amber-50 via-amber-100/70 to-yellow-50 px-6 py-6">
           <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-amber-300 to-amber-500 text-white shadow-md shadow-amber-500/30">
@@ -168,7 +171,7 @@ export default function Premium() {
           </ul>
           <p className="mt-5 text-[12px] text-base-content/50">Contact your administrator to enable this module. Your data stays as it is, and the module unlocks in the same login.</p>
         </div>
-        <Preview k={m.key} />
+        {!previewFirst && <Preview k={m.key} />}
       </div>
     </Page>
   )
