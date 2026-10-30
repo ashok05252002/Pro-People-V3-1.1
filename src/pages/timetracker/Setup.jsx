@@ -1,8 +1,8 @@
 // Devices, Leave, Holidays and Shift master screens.
 import { useState } from 'react'
-import { Download, Upload, Filter, FileText, SlidersHorizontal, CircleArrowRight, ScanLine, Pencil, Trash2 } from 'lucide-react'
+import { Download, Upload, Filter, FileText, SlidersHorizontal, CircleArrowRight, ScanLine, Pencil, Trash2, Check } from 'lucide-react'
 import { Page, Btn, SearchBox, DataTable, Person, rowsOf, actionsCol } from '../../components/table'
-import { AddModal, useOpen } from '../../components/forms'
+import { AddModal, useOpen, FormGrid, toast } from '../../components/forms'
 import { useRows, val } from '../../data/store'
 import { emp, designations, departments, categories, locations } from '../../data/people'
 
@@ -180,5 +180,37 @@ export function Shifts() {
           <Trash2 size={15} className="cursor-pointer hover:text-rose-500" onClick={() => window.confirm('Delete this record?') && remove(r.id)} /></span> },
       ]} />
     </Page>
+  )
+}
+
+// Simple permission (short leave in minutes) rules, from staging's System Settings tab.
+const permissionRules = [
+  { label: 'Permission Count', type: 'number', value: 2, hint: 'Maximum number of permissions allowed per period.' },
+  { label: 'Minimum Duration (minutes)', type: 'number', value: 60, hint: 'Minimum duration in minutes for a permission request. Optional.' },
+  { label: 'Maximum Duration (minutes)', type: 'number', value: 120, hint: 'Maximum duration in minutes allowed per permission request. Optional.' },
+  { label: 'Total Minutes Per Period', type: 'number', value: 120, hint: 'Total permission minutes allowed in a single period. Optional.' },
+  { label: 'Apply Before (days)', type: 'number', value: 30, hint: 'Minimum days in advance a permission request must be submitted.' },
+  { label: 'Frequency', type: 'select', placeholder: 'Select Frequency', options: ['Daily', 'Weekly', 'Monthly', 'Yearly'], value: 'Monthly', hint: 'How often the permission count resets (daily / weekly / monthly). Optional.' },
+]
+const permissionPolicy = [
+  { label: 'Approval Structure', type: 'select', placeholder: 'Select Approval Structure', options: ['Parallel Approval', 'Hierarchy Approval'], value: 'Hierarchy Approval' },
+  { label: 'Number of Approval Levels', type: 'select', placeholder: 'Select Number of Approval Levels', options: ['Single Approval', 'Double Approval', 'Triple Approval', 'Quadruple Approval', 'Quintuple Approval'], value: 'Double Approval' },
+]
+
+export function PermissionSettings() {
+  const save = (e) => { e.preventDefault(); toast('Permission settings saved') }
+  return (
+    <form onSubmit={save}>
+      <Page title="Permission Settings" actions={<Btn primary type="submit" icon={Check}>Save Settings</Btn>}>
+        <div className="space-y-4 rounded-box bg-base-100 p-3">
+          {[['Permission Rules', permissionRules], ['Permissions Policy', permissionPolicy]].map(([title, fields]) => (
+            <section key={title} className="rounded-box bg-base-200/50 p-4">
+              <h3 className="mb-4 text-lg font-bold">{title}</h3>
+              <FormGrid fields={fields} cols={2} />
+            </section>
+          ))}
+        </div>
+      </Page>
+    </form>
   )
 }

@@ -19,6 +19,7 @@ export const pages = {
   '/timetracker/devices': TS.BiometricDevices,
   '/timetracker/leave_groups': TS.LeaveGroups,
   '/timetracker/leave_credits': TS.LeaveCredits,
+  '/timetracker/permission_settings': TS.PermissionSettings,
   '/timetracker/public_holidays': TS.PublicHolidays,
   '/timetracker/master_shift': TS.Shifts,
   '/timetracker/shift_group': AT.ShiftGroups,
