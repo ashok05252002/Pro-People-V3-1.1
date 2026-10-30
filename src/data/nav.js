@@ -1,6 +1,6 @@
 // Sidebar menu, captured from the test staging app on 2026-10-29.
 import {
-  Rocket, Contact, Building2, Clock, CalendarPlus,
+  Rocket, Contact, Building2, Clock,
 } from 'lucide-react'
 
 export const nav = [
@@ -19,12 +19,6 @@ export const nav = [
     ],
   },
   {
-    label: 'Leave Application', icon: CalendarPlus, children: [
-      { label: 'Apply Leave', path: '/leave/apply' },
-      { label: 'Bulk Leave Apply', path: '/leave/bulk' },
-    ],
-  },
-  {
     label: 'Time Tracker', icon: Clock, children: [
       {
         label: 'Approvals', children: [
@@ -38,6 +32,8 @@ export const nav = [
       },
       {
         label: 'Leave', children: [
+          { label: 'Apply Leave', path: '/leave/apply' },
+          { label: 'Bulk Leave Apply', path: '/leave/bulk' },
           { label: 'Leave Types', path: '/timetracker/leave_groups' },
           { label: 'Leave Credits', path: '/timetracker/leave_credits' },
           { label: 'Permission Settings', path: '/timetracker/permission_settings' },
