@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom'
 import {
-  Menu, Search, VolumeX, Moon, Sun, Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDot, LogOut, Star,
+  Menu, Search, VolumeX, Moon, Sun, Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDot, LogOut, Star, Headset,
 } from 'lucide-react'
 import { nav } from '../data/nav'
 import { premiumModules, premiumGroups } from '../data/premium'
@@ -133,6 +133,13 @@ function Sidebar({ collapsed, setCollapsed }) {
             </li>
           )
         })}
+
+        <li className="mt-3 border-t border-base-300 pt-3">
+          <NavLink to="/contact" className={({ isActive }) => top(isActive)} title="Contact">
+            <Headset size={20} strokeWidth={1.5} className="shrink-0" />
+            {!collapsed && <span className="truncate">Contact</span>}
+          </NavLink>
+        </li>
       </ul>
       <button
         onClick={() => setCollapsed(!collapsed)}
