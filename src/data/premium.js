@@ -1,9 +1,15 @@
 // Premium (locked) modules: on staging but not in the customer's plan. The sidebar shows them with a gold
 // star and each opens the upgrade page (/premium/:key). Feature lists come from the 2026-10-30 gap list.
-import { Briefcase, DoorOpen, Wallet, Trophy, FolderOpen, Megaphone, ScrollText } from 'lucide-react'
+import { LayoutDashboard, Briefcase, DoorOpen, Wallet, Trophy, FolderOpen, Megaphone, ScrollText } from 'lucide-react'
 
 // Locked modules listed under the "Premium" heading in the sidebar.
 export const premiumModules = [
+  {
+    key: 'dashboard', label: 'Full Dashboard', icon: LayoutDashboard,
+    desc: 'The complete live dashboard: devices, leave calendar, web check-in and every attendance tile on one screen.',
+    features: ['Devices status: online / offline biometric devices', 'Team leave calendar', 'Check In / Out with web swipe',
+      'On-Duty and Work From Home tiles', 'Notifications feed', 'Extra widget slots you can arrange'],
+  },
   {
     key: 'recruitment', label: 'Recruitment', icon: Briefcase,
     desc: 'Hire faster: track candidates from interview to onboarding, with letters of intent on record.',
