@@ -5,7 +5,7 @@ import { Mail, Eye, EyeOff, CalendarCheck, Clock, Users, Fingerprint, CalendarRa
 
 const modules = [
   [CalendarCheck, 'Attendance Tracking'], [Users, 'Employee Management'],
-  [Clock, 'Shifts & Roster'], [Fingerprint, 'Biometric Devices'],
+  [Clock, 'Shifts & Roster'], [Fingerprint, 'Biometric Devices & Integration'],
   [CalendarRange, 'Leave Management'], [Timer, 'Permission Requests'],
   [PartyPopper, 'Holiday Calendar'], [FileBarChart, 'Reports & Analytics'],
 ]
@@ -60,7 +60,7 @@ export default function Login() {
             <p className="mt-8 mb-3 text-[11px] font-bold tracking-[0.25em] text-white/60 2xl:mt-10 2xl:text-[13px]">STRATEGIC MODULES</p>
             <div className="grid grid-cols-2 gap-3 2xl:gap-4">
               {modules.map(([Icon, label]) => (
-                <div key={label} className="flex h-12 items-center gap-3 rounded-lg border border-white/15 bg-white/[0.07] px-3 text-[13px] font-semibold backdrop-blur-sm 2xl:h-14 2xl:gap-4 2xl:px-4 2xl:text-[15px]">
+                <div key={label} className="flex h-12 items-center gap-3 rounded-lg border border-white/15 leading-tight bg-white/[0.07] px-3 text-[13px] font-semibold backdrop-blur-sm 2xl:h-14 2xl:gap-4 2xl:px-4 2xl:text-[15px]">
                   <span className="grid size-7 shrink-0 place-items-center rounded-md bg-white/15 2xl:size-9"><Icon className="size-3.5 2xl:size-[18px]" /></span>{label}
                 </div>
               ))}
