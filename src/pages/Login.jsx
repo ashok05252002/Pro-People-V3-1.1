@@ -21,7 +21,7 @@ export default function Login() {
   const login = (e) => { e.preventDefault(); go('/dashboard') }
 
   return (
-    <div data-theme="light" className="grid min-h-screen bg-base-100 lg:grid-cols-[54%_1fr]">
+    <div data-theme="light" className="iproat-theme grid min-h-screen bg-base-100 lg:grid-cols-[54%_1fr]">
       {/* brand panel */}
       <section className="relative hidden flex-col overflow-hidden bg-[radial-gradient(120%_95%_at_0%_0%,#3c90cd_0%,#5a62b0_30%,#8a6cb0_52%,#7a2f5c_76%,#1f1a2e_100%)] px-14 py-14 text-white lg:flex">
         <div className="pointer-events-none absolute -right-32 top-1/3 size-[28rem] rounded-full bg-brand-red/25 blur-3xl" />

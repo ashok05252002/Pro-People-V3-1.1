@@ -34,11 +34,11 @@ function ClockCard() {
     <div className="flex flex-col justify-between rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-primary uppercase"><span className="size-1.5 rounded-full bg-primary" />{greet}</div>
+          <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-indigo-600 uppercase"><span className="size-1.5 rounded-full bg-indigo-600" />{greet}</div>
           <div className="mt-1 text-3xl font-bold">{time} <span className="text-sm font-semibold text-base-content/60">{ap}</span></div>
           <div className="text-[10px] tracking-widest text-base-content/50 uppercase">{now.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'long' })}</div>
         </div>
-        <span className="grid size-10 place-items-center rounded-lg bg-base-200"><Sun size={20} className="text-primary" /></span>
+        <span className="grid size-10 place-items-center rounded-lg bg-base-200"><Sun size={20} className="text-indigo-600" /></span>
       </div>
       <div className="mt-6 flex items-end justify-between">
         <div className="flex items-end gap-3">
@@ -94,7 +94,7 @@ export default function Dashboard() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-[13px] text-base-content/60">Welcome back, <span className="font-semibold text-primary">{d.user}</span> . Here's what's happening today.</p>
+          <p className="text-[13px] text-base-content/60">Welcome back, <span className="font-semibold text-indigo-700">{d.user}</span> . Here's what's happening today.</p>
         </div>
         <span className="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-1.5 text-xs font-semibold shadow-sm">
           <span className="size-1.5 rounded-full bg-emerald-500" />{today}

@@ -18,7 +18,7 @@ export function Card({ icon: Icon, title, subtitle, action, children, className 
       {title && (
         <header className="flex items-center gap-3 border-b border-base-300 px-4 py-3.5">
           {Icon && (
-            <span className="grid size-8 place-items-center rounded-md bg-primary/5 text-primary">
+            <span className="grid size-8 place-items-center rounded-md bg-primary/5 text-blue-600">
               <Icon size={16} strokeWidth={1.6} />
             </span>
           )}

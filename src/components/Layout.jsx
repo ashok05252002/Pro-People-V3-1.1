@@ -112,7 +112,7 @@ function Header({ onMenu, dark, setDark }) {
       </button>
       <Bell size={16} strokeWidth={1.5} className="opacity-70" />
       <div className="dropdown dropdown-end">
-        <button className="grid size-8 place-items-center rounded-md bg-primary text-xs font-bold text-primary-content">A</button>
+        <button className="grid size-8 place-items-center rounded-md bg-neutral text-xs font-bold text-neutral-content">A</button>
         <ul className="dropdown-content menu z-40 mt-2 w-40 rounded-box border border-base-300 bg-base-100 p-1 shadow-lg">
           <li><Link to="/login"><LogOut size={14} />Log out</Link></li>
         </ul>

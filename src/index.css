@@ -3,39 +3,22 @@
   themes: light --default, dark;
 }
 
-/* iProAT brand (from the logo): blue #3c90cd -> violet #8a6cb0 -> pink-red #d13854, charcoal #303030. */
-@plugin "daisyui/theme" {
-  name: "light";
-  default: true;
-  --color-primary: #6a5bb3;
-  --color-primary-content: #ffffff;
-  --color-secondary: #3c90cd;
-  --color-secondary-content: #ffffff;
-  --color-accent: #d13854;
-  --color-accent-content: #ffffff;
-  --color-neutral: #303030;
-  --color-neutral-content: #ffffff;
-}
-@plugin "daisyui/theme" {
-  name: "dark";
-  --color-primary: #8a7ad0;
-  --color-primary-content: #ffffff;
-  --color-secondary: #4fa3dd;
-  --color-accent: #e0506b;
-}
-
 @theme {
   --color-brand-blue: #3c90cd;
   --color-brand-violet: #8a6cb0;
   --color-brand-red: #d13854;
 }
 
-/* Primary buttons carry the logo's gradient bar. */
-.btn-primary {
+/* iProAT logo colours, login page only: blue #3c90cd -> violet #8a6cb0 -> pink-red #d13854. */
+.iproat-theme {
+  --color-primary: #6a5bb3;
+  --color-primary-content: #ffffff;
+}
+.iproat-theme .btn-primary {
   background-image: linear-gradient(90deg, var(--color-brand-blue), var(--color-brand-violet) 55%, var(--color-brand-red));
   border-color: transparent;
 }
-.btn-primary:hover { filter: brightness(1.06); }
+.iproat-theme .btn-primary:hover { filter: brightness(1.06); }
 
 body {
   @apply bg-base-200 text-base-content text-sm antialiased;
