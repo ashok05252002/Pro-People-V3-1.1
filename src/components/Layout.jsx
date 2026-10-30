@@ -4,7 +4,7 @@ import {
   Menu, Search, VolumeX, Moon, Sun, Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDot, LogOut, Star,
 } from 'lucide-react'
 import { nav } from '../data/nav'
-import { premiumModules } from '../data/premium'
+import { premiumModules, premiumGroups } from '../data/premium'
 import { Toaster } from './forms'
 import { CustomerLogo } from '../pages/Login'
 
@@ -50,6 +50,17 @@ function SubMenu({ items, depth }) {
   )
 }
 
+function PremiumLink({ m, collapsed }) {
+  return (
+    <NavLink to={`/premium/${m.key}`} title={`${m.label} (Premium)`} className={({ isActive }) =>
+      `relative flex w-full items-center gap-3 rounded-lg px-2.5 py-3 text-sm transition-all ${isActive ? 'bg-amber-100 font-bold text-amber-800' : 'text-base-content/60 hover:bg-amber-50 hover:text-amber-800'}`}>
+      <m.icon size={20} strokeWidth={1.5} className="shrink-0" />
+      {collapsed ? <span className="absolute top-1.5 right-2"><GoldStar size={11} /></span>
+        : <><span className="flex-1 truncate">{m.label}</span><GoldStar /></>}
+    </NavLink>
+  )
+}
+
 function Sidebar({ collapsed, setCollapsed }) {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(() => nav.find((i) => i.children && containsPath(i, pathname))?.label)
@@ -92,16 +103,36 @@ function Sidebar({ collapsed, setCollapsed }) {
           <GoldStar size={collapsed ? 16 : 13} />
           {!collapsed && <span className="text-[11px] font-bold tracking-[0.18em] text-amber-600">PREMIUM</span>}
         </li>
-        {premiumModules.map((m) => (
-          <li key={m.key}>
-            <NavLink to={`/premium/${m.key}`} title={`${m.label} (Premium)`} className={({ isActive }) =>
-              `relative flex w-full items-center gap-3 rounded-lg px-2.5 py-3 text-sm transition-all ${isActive ? 'bg-amber-100 font-bold text-amber-800' : 'text-base-content/60 hover:bg-amber-50 hover:text-amber-800'}`}>
-              <m.icon size={20} strokeWidth={1.5} className="shrink-0" />
-              {collapsed ? <span className="absolute top-1.5 right-2"><GoldStar size={11} /></span>
-                : <><span className="flex-1 truncate">{m.label}</span><GoldStar /></>}
-            </NavLink>
-          </li>
+        {premiumModules.filter((m) => !m.group).map((m) => (
+          <li key={m.key}><PremiumLink m={m} collapsed={collapsed} /></li>
         ))}
+        {Object.entries(premiumGroups).map(([g, grp]) => {
+          const members = premiumModules.filter((m) => m.group === g)
+          const active = members.some((m) => pathname === `/premium/${m.key}`)
+          const isOpen = (open === grp.label || active) && !collapsed
+          return (
+            <li key={g}>
+              <button title={`${grp.label} (Premium)`} onClick={() => (collapsed ? setCollapsed(false) : setOpen(open === grp.label ? null : grp.label))}
+                className={`relative flex w-full items-center gap-2 rounded-lg px-2.5 py-3 text-sm transition-all ${active ? 'font-semibold text-amber-800' : 'text-base-content/60 hover:bg-amber-50 hover:text-amber-800'}`}>
+                <grp.icon size={20} strokeWidth={1.5} className="mr-1 shrink-0" />
+                {collapsed ? <span className="absolute top-1.5 right-2"><GoldStar size={11} /></span>
+                  : <><span className="flex-1 truncate text-left">{grp.label}</span><GoldStar /><ChevronRight size={14} className={`opacity-50 transition-transform ${isOpen ? 'rotate-90' : ''}`} /></>}
+              </button>
+              {isOpen && (
+                <ul className="flex flex-col gap-0.5 py-1 pl-5">
+                  {members.map((m) => (
+                    <li key={m.key}>
+                      <NavLink to={`/premium/${m.key}`} className={({ isActive }) =>
+                        `flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm ${isActive ? 'bg-amber-100 font-semibold text-amber-800' : 'text-base-content/60 hover:bg-amber-50 hover:text-amber-800'}`}>
+                        <m.icon size={14} className="shrink-0" /><span className="flex-1 truncate">{m.label}</span><GoldStar size={11} />
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          )
+        })}
       </ul>
       <button
         onClick={() => setCollapsed(!collapsed)}

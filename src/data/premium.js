@@ -1,8 +1,13 @@
 // Premium (locked) modules: on staging but not in the customer's plan. The sidebar shows them with a gold
 // star and each opens the upgrade page (/premium/:key). Feature lists come from the 2026-10-30 gap list.
-import { LayoutDashboard, Briefcase, DoorOpen, Wallet, Trophy, FolderOpen, Megaphone, ScrollText } from 'lucide-react'
+import {
+  LayoutDashboard, Briefcase, DoorOpen, Wallet, Trophy, FolderOpen, Megaphone, UtensilsCrossed, CarFront, BrainCircuit,
+  HardHat, ScanFace, Users, ShieldAlert, Flame,
+} from 'lucide-react'
 
-// Locked modules listed under the "Premium" heading in the sidebar.
+// Locked modules listed under the "Premium" heading in the sidebar. A module with `group` shows inside that group's dropdown.
+export const premiumGroups = { ai: { label: 'AI Based Solutions', icon: BrainCircuit } }
+
 export const premiumModules = [
   {
     key: 'dashboard', label: 'Full Dashboard', icon: LayoutDashboard,
@@ -43,9 +48,42 @@ export const premiumModules = [
     features: ['Company-wide notices', 'Targeted notices by department or location', 'Notice history'],
   },
   {
-    key: 'audit', label: 'Audit Logs', icon: ScrollText,
-    desc: 'See who changed what, and when, across the system.',
-    features: ['Full change history', 'Filter by user, module and date', 'Export logs'],
+    key: 'canteen', label: 'Canteen Management', icon: UtensilsCrossed,
+    desc: 'Plan menus, take meal bookings and count every meal served, straight to vendor billing and payroll.',
+    features: ['Daily menu and meal planning', 'Meal booking by employees', 'Meal punch by face, card or biometric', 'Meal counts by shift and location',
+      'Vendor billing and subsidy deduction to payroll', 'Canteen reports'],
+  },
+  {
+    key: 'parking', label: 'Parking Management', icon: CarFront,
+    desc: 'Allocate slots, read number plates at the gate and see live parking occupancy.',
+    features: ['Parking slot allocation per employee', 'ANPR number plate recognition at gates', 'Visitor parking passes', 'Live occupancy by zone',
+      'Vehicle entry and exit logs', 'Wrong parking and overstay alerts'],
+  },
+  {
+    key: 'ppe', group: 'ai', label: 'PPE Detection', icon: HardHat,
+    desc: 'Cameras check helmets, safety vests, masks and gloves in real time and alert the supervisor.',
+    features: ['Helmet, vest, mask and gloves detection', 'PPE rules per zone', 'Real-time alerts with snapshot', 'Compliance % by shift and department', 'Violation reports'],
+  },
+  {
+    key: 'camera-attendance', group: 'ai', label: 'Camera Attendance', icon: ScanFace,
+    desc: 'Face recognition on your CCTV cameras marks attendance as people walk in, with no device to touch.',
+    features: ['Face recognition attendance on existing cameras', 'Many people recognised at once', 'Liveness check against photos and videos',
+      'Syncs straight into Time Tracker', 'Unknown face alerts'],
+  },
+  {
+    key: 'headcount', group: 'ai', label: 'Headcount & Occupancy', icon: Users,
+    desc: 'Live count of people in every floor and zone, for safety, evacuation and space planning.',
+    features: ['Live headcount per zone', 'Occupancy limits and alerts', 'Evacuation muster count', 'Peak hours by zone', 'Occupancy trend reports'],
+  },
+  {
+    key: 'intrusion', group: 'ai', label: 'Intrusion & Restricted Zones', icon: ShieldAlert,
+    desc: 'Virtual fences on camera views catch intrusion, loitering and tailgating as it happens.',
+    features: ['Virtual fences on camera views', 'After-hours intrusion alerts', 'Loitering detection', 'Tailgating at access doors', 'Alerts with video clip'],
+  },
+  {
+    key: 'fire-smoke', group: 'ai', label: 'Fire & Smoke Detection', icon: Flame,
+    desc: 'Cameras spot smoke and flames early and raise the alarm before a sensor would.',
+    features: ['Smoke and flame detection on video', 'Instant alarm to the safety team', 'Snapshot and clip with every alert', 'Zone-wise alert rules', 'Incident reports'],
   },
 ]
 

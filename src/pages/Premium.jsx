@@ -3,14 +3,14 @@ import { useParams, Navigate } from 'react-router-dom'
 import { Crown, Star, Lock, CircleCheck, Send, UserCog, Eye, Wifi, WifiOff, Fingerprint, Bell, Briefcase, House } from 'lucide-react'
 import { Page } from '../components/table'
 import { toast } from '../components/forms'
-import { premiumOf } from '../data/premium'
+import { premiumOf, premiumGroups } from '../data/premium'
 import { premiumSamples } from '../data/premiumSamples'
 import { Avatar } from '../components/ui'
 import { emp } from '../data/people'
 
-const good = /^(Paid|Approved|Finalized|Joined|Published|Checked In|Valid|Active|Issued|Online)$/
-const wait = /^(Pending|Processing|Scheduled|Expected|Manager Review|HR Review|Self Assessment|Offer Sent|New)$/
-const bad = /^(Rejected|On Hold|Expiring|Inactive|Deleted|Offline)$/
+const good = /^(Paid|Approved|Finalized|Joined|Published|Checked In|Valid|Active|Issued|Online|Served|Parked|Resolved|Present|Normal)$/
+const wait = /^(Pending|Processing|Scheduled|Expected|Manager Review|HR Review|Self Assessment|Offer Sent|New|Booked|Visitor|Acknowledged|Late|Near Limit)$/
+const bad = /^(Rejected|On Hold|Expiring|Inactive|Deleted|Offline|Cancelled|Wrong Slot|Open|Over Limit)$/
 const Status = ({ s }) => (
   <span className={`rounded px-2 py-0.5 text-[11px] font-medium ${good.test(s) ? 'bg-emerald-100 text-emerald-700' : wait.test(s) ? 'bg-amber-100 text-amber-800' : bad.test(s) ? 'bg-rose-100 text-rose-700' : 'bg-base-200'}`}>{s}</span>
 )
@@ -132,7 +132,7 @@ export default function Premium() {
   const m = premiumOf(useParams().key)
   if (!m) return <Navigate to="/dashboard" replace />
   return (
-    <Page title={m.label} subtitle="Premium module">
+    <Page title={m.label} subtitle={m.group ? `Premium module \u00b7 ${premiumGroups[m.group].label}` : 'Premium module'}>
       <div className="overflow-hidden rounded-box bg-base-100 shadow-sm">
         <div className="flex flex-wrap items-center gap-5 bg-gradient-to-r from-amber-50 via-amber-100/70 to-yellow-50 px-6 py-6">
           <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-amber-300 to-amber-500 text-white shadow-md shadow-amber-500/30">
