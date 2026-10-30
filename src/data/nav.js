@@ -30,26 +30,6 @@ export const nav = [
           { label: 'Biometric Devices', path: '/timetracker/devices' },
         ],
       },
-      {
-        label: 'Leave', children: [
-          { label: 'Leave Types', path: '/timetracker/leave_groups' },
-          { label: 'Leave Credits', path: '/timetracker/leave_credits' },
-        ],
-      },
-      {
-        label: 'Holidays', children: [
-          { label: 'Public Holidays', path: '/timetracker/public_holidays' },
-        ],
-      },
-      {
-        label: 'Shifts', children: [
-          { label: 'Shifts', path: '/timetracker/master_shift' },
-          { label: 'Shift Groups', path: '/timetracker/shift_group' },
-          { label: 'Shift Roster', path: '/timetracker/roster' },
-        ],
-      },
-      { label: 'Reports', path: '/timetracker/reports' },
-      { label: 'Time Adjustment', path: '/timetracker/manual_time_adjustment' },
     ],
   },
 ]
