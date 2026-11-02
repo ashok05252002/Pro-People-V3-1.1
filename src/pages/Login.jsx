@@ -50,7 +50,7 @@ export default function Login() {
 
           <div className="my-auto py-8">
             <p className="text-[11px] font-bold tracking-[0.25em] text-white/60 2xl:text-[13px]">WORKFORCE MANAGEMENT SUITE</p>
-            <h1 className="mt-3 text-5xl leading-none font-black tracking-tight 2xl:text-6xl">ONE LOGIN</h1>
+            <h1 className="mt-3 text-5xl leading-none font-black tracking-tight 2xl:text-6xl">PRO-PEOPLE</h1>
             <p className="mt-3 text-xl font-bold text-white/90 2xl:text-2xl">End-to-End Workforce Automation</p>
             <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/70 2xl:text-lg">
               A complete human resource suite to track people, attendance, leave, shifts and permissions,
